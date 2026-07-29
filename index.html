@@ -93,7 +93,7 @@
             box-shadow: 0 4px 15px rgba(106, 27, 154, 0.15);
         }
 
-        /* AREA KANVAS */
+        /* ✨ AREA PERMAINAN DIPERBAIKI: TINGGI PAS, TIDAK TERPOTONG ✨ */
         #gameCanvas {
             border: 4px solid rgba(255, 255, 255, 0.7);
             border-radius: 20px;
@@ -101,6 +101,7 @@
             background: rgba(255, 255, 255, 0.9);
             position: relative;
             z-index: 2;
+            display: block;
         }
 
         /* ✨ TULISAN TENGAH ✨ */
@@ -174,7 +175,8 @@
         <div class="info-item">🔗 Panjang: <span id="panjang">0</span></div>
     </div>
 
-    <canvas id="gameCanvas" width="800" height="450"></canvas>
+    <!-- ✨ UKURAN TINGGI DIPERBESAR & DIPASANGKAN DENGAN BAGIAN BAWAH ✨ -->
+    <canvas id="gameCanvas" width="800" height="470"></canvas>
 
     <div id="tulisanTengah" class="tulisan-tengah" onclick="klikTengah()">MULAI PERMAINAN</div>
 
@@ -253,7 +255,7 @@
             pemain.x += pemain.arahX;
             pemain.y += pemain.arahY;
 
-            // ✅ DIPERBAIKI: BATAS TEPENYA PAS SEKALI, BISA SAMPAI UJUNG
+            // ✨ PERHITUNGAN BATAS DIPERBAIKI: PAS SAMPAI UJUNG PIKSEL TERAKHIR ✨
             if (pemain.x < 0 || pemain.x > canvas.width - pemain.ukuran ||
                 pemain.y < 0 || pemain.y > canvas.height - pemain.ukuran) {
                 resetGame();
