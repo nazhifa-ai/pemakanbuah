@@ -149,7 +149,7 @@
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('✅ MAIN BEBAS! Hanya Nabrak = Kalah!');
+            notifikasi('✅ MAIN BEBAS TANPA BATAS! Hanya Nabrak = Kalah!');
             loopGame();
         }
 
@@ -163,10 +163,19 @@
             updateUI(); gambarSemua();
         }
 
+        // 🔴 BAGIAN UTAMA: LOOP TANPA BERHENTI
         function loopGame() {
             if (!gameJalan) return;
-            ubahArah(); gerakOtomatis(); updateEkor(); cekTabrakanDinding(); cekMakanBuah();
-            gambarSemua(); updateUI(); requestAnimationFrame(loopGame);
+            
+            ubahArah(); 
+            gerakOtomatis(); 
+            updateEkor(); 
+            cekTabrakanDinding(); 
+            cekMakanBuah();
+            
+            gambarSemua(); 
+            updateUI(); 
+            requestAnimationFrame(loopGame); // Terus berjalan selamanya
         }
 
         function ubahArah() {
@@ -181,7 +190,7 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // 🔴 HANYA KALAH JIKA NABRAK
+        // 💀 HANYA INI YANG BIKIN KALAH: NABRAK DINDING
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -195,11 +204,13 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // ✅ TANPA BATAS LEVEL/SKOR
+        // ⭐ TIDAK ADA BATAS MAKSIMAL LEVEL! NAIK TERUS SAMPAI KAPAN PUN
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
+                
+                // Kecepatan naik pelan, TIDAK ADA BATAS BERHENTI
                 if (skor % 5 === 0) { 
                     level++; 
                     pemain.kecepatan += 0.35; 
@@ -208,19 +219,18 @@
             }
         }
 
-        // 🆕 BACKGROUND BARU: LINGKARAN LEMBUT & GRADASI (BUKAN GARIS/TITIK)
+        // 🎨 BACKGROUND LINGKARAN LEMBUT (BUKAN GARIS/TITIK)
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
         function gambarLatar() {
-            // Warna dasar gradasi ungu lembut
             let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             grad.addColorStop(0, '#F3EDFF');
             grad.addColorStop(1, '#E9DFFF');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Lingkaran besar transparan sebagai hiasan
-            ctx.fillStyle = 'rgba(224, 214, 255, 0.4)';
+            // Lingkaran hiasan transparan
+            ctx.fillStyle = 'rgba(224, 214, 255, 0.45)';
             ctx.beginPath(); ctx.arc(100, 80, 60, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(700, 320, 80, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(650, 60, 45, 0, Math.PI*2); ctx.fill();
