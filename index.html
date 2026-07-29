@@ -55,7 +55,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* AREA KANVAS */
+        /* AREA KANVAS - TINGGI DIPERBESAR & BATAS DIPASANGKAN */
         #gameCanvas {
             border: none;
             border-radius: 20px;
@@ -117,7 +117,8 @@
         <div class="info-item">🔗 Panjang: <span id="panjang">0</span></div>
     </div>
 
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <!-- ✨ TINGGI KANVAS DIPERBESAR JADI 450 AGAR CUKUP SAMPAI BAWAH ✨ -->
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
 
     <div id="tulisanTengah" class="tulisan-tengah" onclick="klikTengah()">MULAI PERMAINAN</div>
 
@@ -130,25 +131,26 @@
         const ctx = canvas.getContext('2d');
         const elemenTulisan = document.getElementById('tulisanTengah');
         
-        // VARIABEL BERSIH, TIDAK ADA BATAS
         let level = 1;
         let skor = 0;
         let gameJalan = false;
         let kecepatanDasar = 3;
 
+        // Ukuran blok pas, mudah diatur
+        const ukuranBlok = 25;
         const pemain = {
             x: 100,
             y: 200,
-            ukuran: 25,
+            ukuran: ukuranBlok,
             arahX: kecepatanDasar,
             arahY: 0,
             ekor: []
         };
 
         const buah = {
-            x: Math.floor(Math.random() * 750) + 25,
-            y: Math.floor(Math.random() * 350) + 25,
-            ukuran: 22
+            x: Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok,
+            y: Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok,
+            ukuran: ukuranBlok
         };
 
         const tombol = {};
@@ -158,7 +160,7 @@
         });
         window.addEventListener('keyup', e => tombol[e.key] = false);
 
-        // KLIK TENGAH
+        // KLIK MULAI - BERFUNGSI BAIK
         function klikTengah() {
             if (!gameJalan) {
                 gameJalan = true;
@@ -167,11 +169,11 @@
             }
         }
 
-        // LOGIKA UTAMA - SANGAT SEDERHANA
+        // LOGIKA UTAMA LENGKAP
         function jalankanGame() {
             if (!gameJalan) return;
 
-            // UBAH ARAH
+            // UBAH ARAH LANCAR
             if (tombol['ArrowUp'] && pemain.arahY !== kecepatanDasar) {
                 pemain.arahX = 0;
                 pemain.arahY = -kecepatanDasar;
@@ -181,4 +183,123 @@
                 pemain.arahY = kecepatanDasar;
             }
             if (tombol['ArrowLeft'] && pemain.arahX !== kecepatanDasar) {
-                pemain.arahX = -
+                pemain.arahX = -kecepatanDasar;
+                pemain.arahY = 0;
+            }
+            if (tombol['ArrowRight'] && pemain.arahX !== -kecepatanDasar) {
+                pemain.arahX = kecepatanDasar;
+                pemain.arahY = 0;
+            }
+
+            // EKOR TERJAGA BAIK
+            pemain.ekor.unshift({x: pemain.x, y: pemain.y});
+            while (pemain.ekor.length > skor) pemain.ekor.pop();
+
+            // GERAK
+            pemain.x += pemain.arahX;
+            pemain.y += pemain.arahY;
+
+            // ✅ BATAS PAS: BISA SAMPAI SANGAT TEPI / BAWAH
+            if (pemain.x < 0 || pemain.x > canvas.width - pemain.ukuran ||
+                pemain.y < 0 || pemain.y > canvas.height - pemain.ukuran) {
+                resetGame();
+                return;
+            }
+
+            // MAKAN BUAH
+            if (pemain.x === buah.x && pemain.y === buah.y) {
+                skor++;
+                buah.x = Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok;
+                buah.y = Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok;
+
+                if (skor % 5 === 0) {
+                    level++;
+                    if (kecepatanDasar < 6) kecepatanDasar += 0.25;
+                }
+            }
+
+            gambarLatar();
+            gambarCacing();
+            gambarBuah();
+            updateUI();
+
+            requestAnimationFrame(jalankanGame);
+        }
+
+        function resetGame() {
+            gameJalan = false;
+            level = 1;
+            skor = 0;
+            kecepatanDasar = 3;
+            pemain.x = 100;
+            pemain.y = 200;
+            pemain.arahX = kecepatanDasar;
+            pemain.arahY = 0;
+            pemain.ekor = [];
+            buah.x = Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok;
+            buah.y = Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok;
+            
+            elemenTulisan.innerText = 'ULANGI';
+            elemenTulisan.style.display = 'block';
+            gambarLatar();
+        }
+
+        function gambarLatar() {
+            ctx.fillStyle = '#FAF7FF';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+        }
+
+        // BENTUK CACING KOTAK SUDUT BULAT
+        function gambarCacing() {
+            // Ekor
+            for(let i=0; i<pemain.ekor.length; i++) {
+                ctx.fillStyle = `hsl(270, 70%, ${62 - i*2}%)`;
+                kotakBulat(ctx, pemain.ekor[i].x+1, pemain.ekor[i].y+1, pemain.ukuran-2, pemain.ukuran-2, 6);
+                ctx.fill();
+            }
+            // Kepala
+            ctx.fillStyle = '#6A1B9A';
+            kotakBulat(ctx, pemain.x+1, pemain.y+1, pemain.ukuran-2, pemain.ukuran-2, 8);
+            ctx.fill();
+
+            // Mata
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(pemain.x+8, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(pemain.x+17, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Fungsi kotak sudut membulat
+        function kotakBulat(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function gambarBuah() {
+            ctx.fillStyle = '#EF5350';
+            ctx.beginPath();
+            ctx.arc(buah.x+buah.ukuran/2, buah.y+buah.ukuran/2, buah.ukuran/2-2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#2E7D32';
+            ctx.fillRect(buah.x+buah.ukuran/2-1, buah.y-5, 2, 6);
+        }
+
+        function updateUI() {
+            document.getElementById('level').innerText = level;
+            document.getElementById('skor').innerText = skor;
+            document.getElementById('panjang').innerText = skor;
+        }
+
+        // Tampilan awal
+        gambarLatar();
+    </script>
+</body>
+</html>
