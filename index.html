@@ -7,14 +7,15 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
+            /* GANTI BACKGROUND JADI UNGU LILAC KALEM */
+            background: linear-gradient(to bottom, #B8A9C9, #F5F0FF);
+            min-height: 100vh;
+            padding: 20px;
+            color: #4A4063; /* Warna teks disesuaikan agar terbaca di latar ungu */
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(to bottom, #2c3e50, #1a252f);
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-            position: relative;
         }
 
         /* === LOGO DI TENGAH LATAR BELAKANG (SAMAR) === */
@@ -25,20 +26,19 @@
             transform: translate(-50%, -50%);
             display: flex;
             gap: 25px;
-            opacity: 0.12; /* Tingkat kesamaran */
-            pointer-events: none; /* Tidak mengganggu permainan */
-            z-index: 0; /* Paling belakang */
+            opacity: 0.10; /* Lebih samar agar makin kalem */
+            pointer-events: none;
+            z-index: 0;
         }
         .logo-tengah img {
             height: 90px;
             width: auto;
-            filter: grayscale(20%);
         }
 
         h1 {
             font-size: 2.3rem;
-            color: #ffdd00;
-            text-shadow: 0 0 10px #ffdd00;
+            color: #7B2CBF; /* Ungu tua cerah */
+            text-shadow: 0 0 8px rgba(123, 44, 191, 0.3);
             margin-bottom: 15px;
             position: relative;
             z-index: 1;
@@ -47,13 +47,14 @@
             width: 800px;
             display: flex;
             justify-content: space-between;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.6);
             padding: 12px 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: bold;
             font-size: 1.1rem;
             margin-bottom: 15px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.8);
             position: relative;
             z-index: 1;
         }
@@ -62,19 +63,21 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #e74c3c;
+            background: #9D4EDD;
             padding: 12px 25px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             font-size: 1.2rem;
+            color: white;
             z-index: 100;
             display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
         }
         #gameCanvas {
-            border: 4px solid #c0392b;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(192, 57, 43, 0.4);
+            border: 4px solid #C77DFF;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
+            background: #F8F5FF;
             position: relative;
             z-index: 1;
         }
@@ -88,19 +91,19 @@
         }
         button {
             padding: 10px 22px;
-            background: #2ecc71;
+            background: linear-gradient(135deg, #9D4EDD, #7B2CBF);
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 1rem;
             font-weight: bold;
             color: white;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
         }
         button:hover {
-            background: #27ae60;
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.6);
+            background: linear-gradient(135deg, #C77DFF, #9D4EDD);
+            box-shadow: 0 0 15px rgba(199, 125, 255, 0.5);
             transform: translateY(-2px);
         }
     </style>
@@ -138,7 +141,7 @@
         let waktu = 60, level = 1, skor = 0;
         let gameJalan = false;
 
-        // Objek Cacing - Kecepatan awal LEBIH PELAN (3.5)
+        // Objek Cacing
         const pemain = {
             x: 80, y: 200, ukuran: 26, kecepatan: 3.5, kecepatanDasar: 3.5,
             arahX: 1, arahY: 0,
@@ -146,7 +149,7 @@
         };
 
         // Buah
-        const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#e67e22'};
+        const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#E63946'};
 
         const tombol = {};
         window.addEventListener('keydown', e => {
@@ -186,7 +189,7 @@
             waktu = 60; level = 1; skor = 0;
             pemain.x = 80; pemain.y = 200; pemain.ekor = [];
             pemain.arahX = 1; pemain.arahY = 0;
-            pemain.kecepatan = pemain.kecepatanDasar; // Reset kecepatan pelan
+            pemain.kecepatan = pemain.kecepatanDasar;
             buah.x = 500; buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
@@ -250,7 +253,7 @@
                 buah.y = acak(50, 350);
                 if (skor % 5 === 0) { 
                     level++; 
-                    pemain.kecepatan += 0.4; // Tiap level naik, makin cepat dikit
+                    pemain.kecepatan += 0.4;
                     notifikasi(`Level ${level}! Lebih Cepat! 🚀`); 
                     waktu += 5; 
                 }
@@ -260,16 +263,16 @@
         // === GAMBARAN ===
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
-        // === BACKGROUND ===
+        // === BACKGROUND DALAM GAME (DI DALAM KANVAS) ===
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
-            grad.addColorStop(0, '#a8e063'); grad.addColorStop(1, '#56ab2f');
+            grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
             ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width,canvas.height);
 
-            ctx.fillStyle = '#ffeb3b'; ctx.shadowColor = '#ffeb3b'; ctx.shadowBlur=20;
+            ctx.fillStyle = '#FFD700'; ctx.shadowColor = '#FFD700'; ctx.shadowBlur=15;
             ctx.beginPath(); ctx.arc(720, 60, 35, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
 
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
             gambarAwan(120, 80); gambarAwan(350, 50); gambarAwan(600, 90);
         }
         function gambarAwan(x,y) {
@@ -279,13 +282,13 @@
         function gambarEkor() {
             for(let i=0; i<pemain.ekor.length; i++) {
                 let b = pemain.ekor[i];
-                ctx.fillStyle = `rgb(${50-i*2}, ${150+i*2}, 220)`;
+                ctx.fillStyle = `rgb(${140-i*2}, ${110+i*3}, ${230})`;
                 ctx.shadowBlur=3; ctx.beginPath(); ctx.arc(b.x,b.y,pemain.ukuran/2 - i*0.7,0,Math.PI*2); ctx.fill();
             } ctx.shadowBlur=0;
         }
 
         function gambarPemain() {
-            ctx.fillStyle = pemain.warna; ctx.shadowColor = '#2980b9'; ctx.shadowBlur=10;
+            ctx.fillStyle = '#7B2CBF'; ctx.shadowColor = '#9D4EDD'; ctx.shadowBlur=10;
             ctx.beginPath(); ctx.arc(pemain.x,pemain.y,pemain.ukuran/2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
             
             // Mata
@@ -294,9 +297,9 @@
         }
 
         function gambarBuah() {
-            ctx.fillStyle = buah.warna; ctx.shadowColor='#e67e22'; ctx.shadowBlur=12;
+            ctx.fillStyle = buah.warna; ctx.shadowColor='#E63946'; ctx.shadowBlur=12;
             ctx.beginPath(); ctx.arc(buah.x,buah.y,buah.ukuran/2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            ctx.fillStyle='#27ae60'; ctx.fillRect(buah.x-2, buah.y-14, 4, 8);
+            ctx.fillStyle='#228B22'; ctx.fillRect(buah.x-2, buah.y-14, 4, 8);
         }
 
         function updateUI() {
