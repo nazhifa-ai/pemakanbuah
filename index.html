@@ -16,6 +16,18 @@
             align-items: center;
         }
 
+        /* === LOGO DI ATAS (LUAR AREA PERMAINAN) === */
+        .logo-di-atas {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .logo-di-atas img {
+            height: 75px;
+            width: auto;
+            border-radius: 6px;
+        }
+
         h1 {
             font-size: 2.3rem;
             color: #7B2CBF;
@@ -25,7 +37,8 @@
         .info {
             width: 800px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 40px; /* Jarak antar tulisan */
             background: rgba(255,255,255,0.6);
             padding: 12px 20px;
             border-radius: 12px;
@@ -83,11 +96,19 @@
 </head>
 <body>
 
+    <!-- 🔴 LOGO DITARUH DI ATAS (LUAR KOTAK GAME) -->
+    <div class="logo-di-atas">
+        <img src="1sanden.jpeg" alt="Logo Sanden">
+        <img src="logosklh.jpeg" alt="Logo Sekolah">
+        <img src="mk.jpeg" alt="Logo MOKO">
+        <img src="rpl.jpeg" alt="Logo RPL">
+    </div>
+
     <h1>🐍 CACING PEMAKAN BUAH 🍎</h1>
     <div id="notifikasi"></div>
 
+    <!-- ⏱️ HAPUS MENU WAKTU, TINGGAL LEVEL, SKOR, PANJANG -->
     <div class="info">
-        <div>⏱️ Waktu: <span id="waktu">60</span> dtk</div>
         <div>📈 Level: <span id="level">1</span></div>
         <div>⭐ Skor Kamu: <span id="skor">0</span></div>
         <div>🔗 Panjang Ekor: <span id="panjang">0</span></div>
@@ -103,7 +124,7 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let waktu = 60, level = 1, skor = 0;
+        let level = 1, skor = 0; // ❌ WAKTU DIHAPUS
         let gameJalan = false;
 
         // Objek Cacing
@@ -114,14 +135,6 @@
 
         // Buah
         const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#E63946'};
-
-        // ✅ LOGO DI DALAM KANVAS, TENGAH, SANGAT SAMAR (PERSIS CONTOH)
-        const daftarLogo = [
-            {src: '1sanden.jpeg', x: 155, y: 155},
-            {src: 'logosklh.jpeg', x: 285, y: 155},
-            {src: 'mk.jpeg', x: 415, y: 155},
-            {src: 'rpl.jpeg', x: 545, y: 155}
-        ];
 
         const tombol = {};
         window.addEventListener('keydown', e => {
@@ -141,24 +154,12 @@
             if (gameJalan) return;
             gameJalan = true;
             notifikasi('Permainan Dimulai! 🎮');
-            
-            const timer = setInterval(() => {
-                if (!gameJalan) { clearInterval(timer); return; }
-                waktu--;
-                document.getElementById('waktu').innerText = waktu;
-                if (waktu <= 0) {
-                    gameJalan = false;
-                    notifikasi(`SELESAI! Skor Akhir: ${skor} 🎉`);
-                    clearInterval(timer);
-                }
-            }, 1000);
-
             loopGame();
         }
 
         function resetGame() {
             gameJalan = false;
-            waktu = 60; level = 1; skor = 0;
+            level = 1; skor = 0; // ❌ TIDAK ADA WAKTU
             pemain.x = 80; pemain.y = 200; pemain.ekor = [];
             pemain.arahX = 1; pemain.arahY = 0;
             pemain.kecepatan = pemain.kecepatanDasar;
@@ -188,7 +189,7 @@
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
                 gameJalan = false;
-                notifikasi(`💥 NABRAK DINDING! Skor: ${skor}`);
+                notifikasi(`💥 NABRAK DINDING! Skor Akhir: ${skor}`);
             }
         }
 
@@ -201,11 +202,15 @@
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
-                if (skor % 5 === 0) { level++; pemain.kecepatan += 0.4; notifikasi(`Level ${level}! 🚀`); waktu += 5; }
+                if (skor % 5 === 0) { 
+                    level++; 
+                    pemain.kecepatan += 0.4; 
+                    notifikasi(`Level ${level}! Semakin Cepat! 🚀`); 
+                }
             }
         }
 
-        function gambarSemua() { gambarLatar(); gambarLogoSamar(); gambarEkor(); gambarPemain(); gambarBuah(); }
+        function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
@@ -220,17 +225,6 @@
         }
         function gambarAwan(x,y) {
             ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
-        }
-
-        // 🔑 BAGIAN LOGO SAMAR (OPACITY 0.1 = SANGAR TIPIS)
-        function gambarLogoSamar() {
-            ctx.globalAlpha = 0.10; // Semakin kecil semakin samar
-            daftarLogo.forEach(item => {
-                let img = new Image();
-                img.src = item.src;
-                img.onload = () => ctx.drawImage(img, item.x, item.y, 90, 90);
-            });
-            ctx.globalAlpha = 1.0; // Kembali normal untuk gambar lain
         }
 
         function gambarEkor() {
@@ -254,8 +248,8 @@
             ctx.fillStyle='#228B22'; ctx.fillRect(buah.x-2, buah.y-14, 4, 8);
         }
 
+        // ❌ HAPUS BAGIAN WAKTU
         function updateUI() {
-            document.getElementById('waktu').innerText=waktu;
             document.getElementById('level').innerText=level;
             document.getElementById('skor').innerText=skor;
             document.getElementById('panjang').innerText=skor;
