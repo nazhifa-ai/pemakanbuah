@@ -67,7 +67,7 @@
             border: 4px solid #C77DFF;
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
-            background: #F8F5FF;
+            background: #F0EBFF;
         }
         .tombol {
             margin-top: 15px;
@@ -84,7 +84,7 @@
             font-weight: bold;
             color: white;
             cursor: pointer;
-1            transition: 0.2s;
+            transition: 0.2s;
             box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
         }
         button:hover {
@@ -104,10 +104,10 @@
         <img src="rpl.jpeg" alt="Logo RPL">
     </div>
 
-    <h1>🐍 CACING PEMAKAN BUAH 🍎</h1>
+    <h1>🐍 Cacing Pemakan Buah 🍎</h1>
     <div id="notifikasi"></div>
 
-    <!-- INFO TANPA WAKTU & TANPA TARGET -->
+    <!-- INFO TANPA BATAS & TANPA TARGET -->
     <div class="info">
         <div>📈 Level: <span id="level">1</span></div>
         <div>⭐ Skor Kamu: <span id="skor">0</span></div>
@@ -147,13 +147,13 @@
         function notifikasi(teks) {
             const n = document.getElementById('notifikasi');
             n.innerText = teks; n.style.display = 'block';
-            setTimeout(() => n.style.display = 'none', 3000);
+            setTimeout(() => n.style.display = 'none', 2000);
         }
 
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('Main Sepuasnya! 🎮');
+            notifikasi('Main Sepuasnya! Nabrak = Kalah!');
             loopGame();
         }
 
@@ -185,7 +185,7 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // KALAU NABRAK DINDING BARU KALAH
+        // HANYA NABRAK DINDING BARU KALAH
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -199,12 +199,11 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // MAKAN BUAH TERUS, TANPA BERHENTI
+        // TANPA BATAS SKOR & LEVEL
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
-                // Semakin lama main, semakin cepat (semakin menantang)
                 if (skor % 5 === 0) { 
                     level++; 
                     pemain.kecepatan += 0.35; 
@@ -213,21 +212,29 @@
             }
         }
 
+        // ✅ LATAR BERGARIS HALUS UNGU (TIDAK POLOS, TIDAK ADA AWAN)
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
         function gambarLatar() {
-            let grad = ctx.createLinearGradient(0,0,0,canvas.height);
-            grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
-            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-            ctx.fillStyle = '#FFD700'; ctx.shadowColor = '#FFD700'; ctx.shadowBlur=15;
-            ctx.beginPath(); ctx.arc(720, 60, 35, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            gambarAwan(120, 80); gambarAwan(380, 60); gambarAwan(550, 70); gambarAwan(680, 90);
-        }
-        function gambarAwan(x,y) {
-            ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
+            // Warna dasar
+            ctx.fillStyle = '#F0EBFF';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Garis-garis halus ungu muda
+            ctx.strokeStyle = '#E0D6FF';
+            ctx.lineWidth = 1;
+            for(let i = 0; i < canvas.width; i += 25) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for(let j = 0; j < canvas.height; j += 25) {
+                ctx.beginPath();
+                ctx.moveTo(0, j);
+                ctx.lineTo(canvas.width, j);
+                ctx.stroke();
+            }
         }
 
         function gambarEkor() {
