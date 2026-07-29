@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemakan Buah - Hanya Panah Atas Bawah 🍎</title>
+    <title>Pemakan Buah - Bertambah Ekor 🍎</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #2c3e50;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
             min-height: 100vh;
             padding: 20px;
             color: white;
@@ -25,12 +25,13 @@
             width: 800px;
             display: flex;
             justify-content: space-between;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             padding: 12px 20px;
             border-radius: 10px;
             font-weight: bold;
             font-size: 1.1rem;
             margin-bottom: 15px;
+            backdrop-filter: blur(5px);
         }
         #notifikasi {
             position: fixed;
@@ -44,11 +45,12 @@
             font-size: 1.2rem;
             z-index: 100;
             display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         #gameCanvas {
             border: 3px solid #2ecc71;
             border-radius: 8px;
-            background: #ecf0f1;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
         }
         .tombol {
             margin-top: 15px;
@@ -66,17 +68,20 @@
             color: white;
             cursor: pointer;
             transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         button:hover {
             background: #27ae60;
-            box-shadow: 0 0 10px #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.6);
+            transform: translateY(-2px);
         }
         .kontrol-info {
             margin-top: 10px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             padding: 8px 16px;
             border-radius: 8px;
             font-size: 1rem;
+            backdrop-filter: blur(5px);
         }
     </style>
 </head>
@@ -89,6 +94,7 @@
         <div>⏱️ Waktu: <span id="waktu">60</span> dtk</div>
         <div>📈 Level: <span id="level">1</span></div>
         <div>⭐ Skor Kamu: <span id="skor">0</span></div>
+        <div>🔗 Panjang Ekor: <span id="panjang">0</span></div>
     </div>
 
     <canvas id="gameCanvas" width="800" height="400"></canvas>
@@ -99,7 +105,7 @@
     </div>
 
     <div class="kontrol-info">
-        ✅ GUNAKAN HANYA: ⬆️ (Atas) & ⬇️ (Bawah)
+        ✅ GUNAKAN HANYA: ⬆️ (Atas) & ⬇️ (Bawah) | 🍎 Makan Buah = Ekor Bertambah!
     </div>
 
     <script>
@@ -108,23 +114,25 @@
         let waktu = 60, level = 1, skor = 0;
         let gameJalan = false;
 
-        // Posisi Pemain & Buah
-        const pemain = {x: 80, y: 180, ukuran: 30, kecepatan: 6, warna: '#3498db'};
-        const buah = {x: 400, y: acak(50,350), ukuran: 25, warna: '#e67e22'};
+        // Objek Pemain
+        const pemain = {
+            x: 80, y: 180, ukuran: 28, kecepatan: 6, warna: '#3498db',
+            ekor: [] // Menyimpan bagian ekor
+        };
+        const panjangBagian = 22; // Jarak antar bagian ekor
 
-        // Penyimpanan Tombol
+        // Buah
+        const buah = {x: 450, y: acak(50,350), ukuran: 24, warna: '#e67e22'};
+
+        // Tombol Kontrol
         const tombol = {};
-        window.addEventListener('keydown', function(e) {
+        window.addEventListener('keydown', e => {
             tombol[e.key] = true;
-            // Mencegah halaman ikut bergulir saat tekan panah
             if(["ArrowUp","ArrowDown"].includes(e.key)) e.preventDefault();
         });
-        window.addEventListener('keyup', function(e) {
-            tombol[e.key] = false;
-        });
+        window.addEventListener('keyup', e => tombol[e.key] = false);
 
         function acak(min, max) { return Math.floor(Math.random()*(max-min)+min); }
-
         function notifikasi(teks) {
             const n = document.getElementById('notifikasi');
             n.innerText = teks; n.style.display = 'block';
@@ -136,6 +144,7 @@
             gameJalan = true;
             notifikasi('Permainan Dimulai! 🎮');
             
+            // Timer
             const timer = setInterval(() => {
                 if (!gameJalan) { clearInterval(timer); return; }
                 waktu--;
@@ -153,7 +162,7 @@
         function resetGame() {
             gameJalan = false;
             waktu = 60; level = 1; skor = 0;
-            pemain.y = 180;
+            pemain.y = 180; pemain.ekor = []; // Hapus semua ekor
             buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
@@ -162,23 +171,32 @@
             if (!gameJalan) return;
 
             gerakPemain();
+            updateEkor();
             cekMakan();
-            gambarLatar(); gambarPemain(); gambarBuah();
+            gambarSemua();
             updateUI();
 
             requestAnimationFrame(loopGame);
         }
 
-        // === KONTROL YANG PASTI BERJALAN ===
+        // === KONTROL ATAS & BAWAH ===
         function gerakPemain() {
-            if (tombol['ArrowUp']) {
-                if (pemain.y > 0) pemain.y -= pemain.kecepatan;
-            }
-            if (tombol['ArrowDown']) {
-                if (pemain.y < canvas.height - pemain.ukuran) pemain.y += pemain.kecepatan;
+            if (tombol['ArrowUp'] && pemain.y > 0) pemain.y -= pemain.kecepatan;
+            if (tombol['ArrowDown'] && pemain.y < canvas.height - pemain.ukuran) pemain.y += pemain.kecepatan;
+        }
+
+        // === SISTEM EKOR: Setiap makan buah, bertambah satu bagian ===
+        function updateEkor() {
+            // Tambahkan posisi kepala ke awal daftar
+            pemain.ekor.unshift({x: pemain.x, y: pemain.y});
+            
+            // Batasi panjang ekor sesuai jumlah yang dimiliki
+            while(pemain.ekor.length > skor) {
+                pemain.ekor.pop();
             }
         }
 
+        // === CEK MAKAN BUAH ===
         function cekMakan() {
             if (Math.abs(pemain.x - buah.x) < 35 && Math.abs(pemain.y - buah.y) < 35) {
                 skor++;
@@ -195,26 +213,97 @@
             }
         }
 
-        // Gambar Tampilan
-        function gambarLatar() { ctx.fillStyle='#ecf0f1'; ctx.fillRect(0,0,canvas.width,canvas.height); }
-        function gambarPemain() {
-            ctx.fillStyle = pemain.warna; ctx.shadowColor = pemain.warna; ctx.shadowBlur=8;
-            ctx.beginPath(); ctx.arc(pemain.x, pemain.y, pemain.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+        // === GAMBAR SEMUA ELEMEN ===
+        function gambarSemua() {
+            gambarLatar();
+            gambarEkor();
+            gambarPemain();
+            gambarBuah();
         }
+
+        // === BACKGROUND PEMANDANGAN ===
+        function gambarLatar() {
+            // Langit gradasi
+            let grad = ctx.createLinearGradient(0,0,0,canvas.height);
+            grad.addColorStop(0, '#a8e063');
+            grad.addColorStop(1, '#56ab2f');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            // Matahari
+            ctx.fillStyle = '#ffeb3b';
+            ctx.shadowColor = '#ffeb3b'; ctx.shadowBlur=20;
+            ctx.beginPath(); ctx.arc(720, 60, 35, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+
+            // Awan
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            gambarAwan(120, 80);
+            gambarAwan(350, 50);
+            gambarAwan(600, 90);
+
+            // Tanah/Rumput bawah
+            ctx.fillStyle = '#2e7d32';
+            ctx.fillRect(0, canvas.height-15, canvas.width, 15);
+        }
+
+        function gambarAwan(x,y) {
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI*2);
+            ctx.arc(x+25, y-8, 25, 0, Math.PI*2);
+            ctx.arc(x+50, y, 20, 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        // === GAMBAR EKOR PEMAIN ===
+        function gambarEkor() {
+            for(let i=0; i<pemain.ekor.length; i++) {
+                let bagian = pemain.ekor[i];
+                // Warna makin pudar ke belakang
+                let r = 52 - (i*2);
+                let g = 152 + (i*2);
+                let b = 219;
+                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                ctx.shadowColor = pemain.warna; ctx.shadowBlur=4;
+                ctx.beginPath(); 
+                ctx.arc(bagian.x, bagian.y, pemain.ukuran/2 - (i*0.8), 0, Math.PI*2); 
+                ctx.fill(); 
+                ctx.shadowBlur=0;
+            }
+        }
+
+        function gambarPemain() {
+            ctx.fillStyle = pemain.warna; 
+            ctx.shadowColor = pemain.warna; ctx.shadowBlur=10;
+            ctx.beginPath(); ctx.arc(pemain.x, pemain.y, pemain.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+            
+            // Mata
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(pemain.x+8, pemain.y-3, 5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#222';
+            ctx.beginPath(); ctx.arc(pemain.x+9, pemain.y-3, 2.5, 0, Math.PI*2); ctx.fill();
+        }
+
         function gambarBuah() {
-            ctx.fillStyle = buah.warna; ctx.shadowColor='#e67e22'; ctx.shadowBlur=10;
+            ctx.fillStyle = buah.warna; 
+            ctx.shadowColor='#e67e22'; ctx.shadowBlur=12;
             ctx.beginPath(); ctx.arc(buah.x, buah.y, buah.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            ctx.fillStyle='#27ae60'; ctx.fillRect(buah.x+5, buah.y-15, 5, 8);
+            // Batang & Daun
+            ctx.fillStyle='#27ae60'; 
+            ctx.fillRect(buah.x-2, buah.y-buah.ukuran/2-8, 4, 8);
+            ctx.beginPath(); ctx.ellipse(buah.x+6, buah.y-buah.ukuran/2-5, 6, 4, 0.5, 0, Math.PI*2); ctx.fill();
         }
 
         function updateUI() {
             document.getElementById('waktu').innerText=waktu;
             document.getElementById('level').innerText=level;
             document.getElementById('skor').innerText=skor;
+            document.getElementById('panjang').innerText=skor;
         }
 
-        // Gambar Awal
-        gambarLatar(); gambarPemain(); gambarBuah();
+        // Gambar awal saat dibuka
+        gambarLatar();
+        gambarPemain();
+        gambarBuah();
     </script>
 </body>
 </html>
