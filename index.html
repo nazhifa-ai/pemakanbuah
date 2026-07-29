@@ -14,12 +14,34 @@
             min-height: 100vh;
             padding: 20px;
             color: white;
+            position: relative;
         }
+
+        /* === LOGO DI TENGAH LATAR BELAKANG (SAMAR) === */
+        .logo-tengah {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 25px;
+            opacity: 0.12; /* Tingkat kesamaran */
+            pointer-events: none; /* Tidak mengganggu permainan */
+            z-index: 0; /* Paling belakang */
+        }
+        .logo-tengah img {
+            height: 90px;
+            width: auto;
+            filter: grayscale(20%);
+        }
+
         h1 {
             font-size: 2.3rem;
             color: #ffdd00;
             text-shadow: 0 0 10px #ffdd00;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
         .info {
             width: 800px;
@@ -32,10 +54,12 @@
             font-size: 1.1rem;
             margin-bottom: 15px;
             backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
         #notifikasi {
             position: fixed;
-            "top": 20px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: #e74c3c;
@@ -51,12 +75,16 @@
             border: 4px solid #c0392b;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(192, 57, 43, 0.4);
+            position: relative;
+            z-index: 1;
         }
         .tombol {
             margin-top: 15px;
             display: flex;
             gap: 12px;
             justify-content: center;
+            position: relative;
+            z-index: 1;
         }
         button {
             padding: 10px 22px;
@@ -78,6 +106,14 @@
     </style>
 </head>
 <body>
+
+    <!-- 🔴 LOGO DENGAN NAMA FILE YANG TEPAT -->
+    <div class="logo-tengah">
+        <img src="1sanden.jpeg" alt="Logo Sanden">
+        <img src="logosklh.jpeg" alt="Logo Sekolah">
+        <img src="mk.jpeg" alt="Logo MOKO">
+        <img src="rpl.jpeg" alt="Logo RPL">
+    </div>
 
     <h1>🐍 CACING PEMAKAN BUAH 🍎</h1>
     <div id="notifikasi"></div>
