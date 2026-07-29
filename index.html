@@ -67,7 +67,6 @@
             border: 4px solid #C77DFF;
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
-            background: #F0EBFF;
         }
         .tombol {
             margin-top: 15px;
@@ -107,7 +106,6 @@
     <h1>🐍 Cacing Pemakan Buah 🍎</h1>
     <div id="notifikasi"></div>
 
-    <!-- INFO TANPA BATAS & TANPA TARGET -->
     <div class="info">
         <div>📈 Level: <span id="level">1</span></div>
         <div>⭐ Skor Kamu: <span id="skor">0</span></div>
@@ -127,13 +125,11 @@
         let level = 1, skor = 0;
         let gameJalan = false;
 
-        // Objek Cacing
         const pemain = {
             x: 80, y: 200, ukuran: 26, kecepatan: 3.2, kecepatanDasar: 3.2,
             arahX: 1, arahY: 0, ekor: []
         };
 
-        // Buah
         const buah = {x: acak(100, 700), y: acak(50, 350), ukuran: 24, warna: '#E63946'};
 
         const tombol = {};
@@ -153,7 +149,7 @@
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('Main Sepuasnya! Nabrak = Kalah!');
+            notifikasi('MAIN BEBAS! Hanya Nabrak = Kalah!');
             loopGame();
         }
 
@@ -185,7 +181,7 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // HANYA NABRAK DINDING BARU KALAH
+        // 🔴 HANYA KALAH JIKA NABRAK DINDING
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -199,11 +195,12 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // TANPA BATAS SKOR & LEVEL
+        // ✅ TIDAK ADA BATAS LEVEL/SKOR: MAKAN TERUS SAMPAI KAPAN PUN
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
+                // Kecepatan naik terus, TIDAK BERHENTI DI LEVEL 5
                 if (skor % 5 === 0) { 
                     level++; 
                     pemain.kecepatan += 0.35; 
@@ -212,28 +209,21 @@
             }
         }
 
-        // ✅ LATAR BERGARIS HALUS UNGU (TIDAK POLOS, TIDAK ADA AWAN)
+        // ✅ LATAR KOTAK-KOTAK HALUS UNGU (TIDAK POLOS, TIDAK ADA AWAN)
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
         function gambarLatar() {
-            // Warna dasar
             ctx.fillStyle = '#F0EBFF';
             ctx.fillRect(0,0,canvas.width,canvas.height);
             
-            // Garis-garis halus ungu muda
+            // Garis kotak-kotak halus
             ctx.strokeStyle = '#E0D6FF';
             ctx.lineWidth = 1;
             for(let i = 0; i < canvas.width; i += 25) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
             }
             for(let j = 0; j < canvas.height; j += 25) {
-                ctx.beginPath();
-                ctx.moveTo(0, j);
-                ctx.lineTo(canvas.width, j);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
             }
         }
 
