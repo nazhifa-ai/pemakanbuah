@@ -93,7 +93,7 @@
             box-shadow: 0 4px 15px rgba(106, 27, 154, 0.15);
         }
 
-        /* AREA KANVAS - DIPERLUAS AGAR BISA SAMPAI BAWAH */
+        /* AREA KANVAS */
         #gameCanvas {
             border: 4px solid rgba(255, 255, 255, 0.7);
             border-radius: 20px;
@@ -192,7 +192,7 @@
         let gameJalan = false;
         let kecepatan = 3;
 
-        // ✨ BENTUK KOTAK RAPI, MUDAH BERGERAK ✨
+        // Ukuran blok cacing
         const ukuranBlok = 25;
         const pemain = {
             x: 100,
@@ -227,7 +227,7 @@
         function jalankanGame() {
             if (!gameJalan) return;
 
-            // UBAH ARAH
+            // Ubah arah
             if (tombol['ArrowUp'] && pemain.arahY !== kecepatan) {
                 pemain.arahX = 0;
                 pemain.arahY = -kecepatan;
@@ -245,23 +245,24 @@
                 pemain.arahY = 0;
             }
 
-            // EKOR JELAS & PANJANG
+            // Simpan ekor
             pemain.ekor.unshift({x: pemain.x, y: pemain.y});
             while (pemain.ekor.length > skor) pemain.ekor.pop();
 
-            // GERAK BEBAS SAMPAI BATAS PINGGIR
+            // Gerakkan
             pemain.x += pemain.arahX;
             pemain.y += pemain.arahY;
 
-            // ✨ BISA SAMPAI KE SANGAT BAWAH & SISI LAIN ✨
+            // ✅ DIPERBAIKI: BATAS TEPENYA PAS SEKALI, BISA SAMPAI UJUNG
             if (pemain.x < 0 || pemain.x > canvas.width - pemain.ukuran ||
                 pemain.y < 0 || pemain.y > canvas.height - pemain.ukuran) {
                 resetGame();
                 return;
             }
 
-            // MAKAN BUAH TANPA BATAS
-            if (pemain.x === buah.x && pemain.y === buah.y) {
+            // Makan buah
+            if (Math.abs(pemain.x - buah.x) < pemain.ukuran && 
+                Math.abs(pemain.y - buah.y) < pemain.ukuran) {
                 skor++;
                 buah.x = Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok;
                 buah.y = Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok;
@@ -306,9 +307,9 @@
             ctx.fillRect(0,0,canvas.width,canvas.height);
         }
 
-        // ✨ BENTUK BARU: KOTAK BULAT SUDUT, RAPI & BAGUS ✨
+        // Bentuk cacing kotak sudut bulat
         function gambarCacingKotak() {
-            // GAMBAR EKOR
+            // Ekor
             for(let i=0; i<pemain.ekor.length; i++) {
                 ctx.fillStyle = `hsl(270, 70%, ${60 - i*2}%)`;
                 ctx.shadowBlur = 5;
@@ -316,7 +317,7 @@
                 roundRect(ctx, pemain.ekor[i].x+1, pemain.ekor[i].y+1, pemain.ukuran-2, pemain.ukuran-2, 6);
                 ctx.fill();
             }
-            // GAMBAR KEPALA
+            // Kepala
             ctx.fillStyle = '#6A1B9A';
             ctx.shadowBlur = 8;
             ctx.shadowColor = '#9C27B0';
@@ -324,13 +325,13 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // MATA
+            // Mata
             ctx.fillStyle = 'white';
             ctx.beginPath(); ctx.arc(pemain.x+8, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(pemain.x+17, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
         }
 
-        // FUNGSI KOTAK SUDUT BULAT
+        // Fungsi kotak sudut membulat
         function roundRect(ctx, x, y, w, h, r) {
             ctx.beginPath();
             ctx.moveTo(x + r, y);
