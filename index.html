@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cacing Pemakan Buah - Otomatis & Dinding 🍎</title>
+    <title>Cacing Pemakan Buah 🍎</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
@@ -35,7 +35,7 @@
         }
         #notifikasi {
             position: fixed;
-            top: 20px;
+            "top": 20px;
             left: 50%;
             transform: translateX(-50%);
             background: #e74c3c;
@@ -75,14 +75,6 @@
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.6);
             transform: translateY(-2px);
         }
-        .kontrol-info {
-            margin-top: 10px;
-            background: rgba(255,255,255,0.15);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 1rem;
-            backdrop-filter: blur(5px);
-        }
     </style>
 </head>
 <body>
@@ -104,20 +96,16 @@
         <button onclick="resetGame()">🔄 Ulangi</button>
     </div>
 
-    <div class="kontrol-info">
-        ✅ Cacing GERAK SENDIRI | Kendalikan arah dengan ⬆️ ⬇️ ⬅️ ➡️ | ⚠️ NABRAK DINDING = MATI!
-    </div>
-
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let waktu = 60, level = 1, skor = 0;
         let gameJalan = false;
 
-        // Objek Cacing
+        // Objek Cacing - Kecepatan awal LEBIH PELAN (3.5)
         const pemain = {
-            x: 80, y: 200, ukuran: 26, kecepatan: 5, warna: '#3498db',
-            arahX: 1, arahY: 0, // Mulai gerak ke kanan otomatis
+            x: 80, y: 200, ukuran: 26, kecepatan: 3.5, kecepatanDasar: 3.5,
+            arahX: 1, arahY: 0,
             ekor: []
         };
 
@@ -141,7 +129,7 @@
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('Permainan Dimulai! Awas Jangan Nabrak Dinding! 🎮');
+            notifikasi('Permainan Dimulai! 🎮');
             
             const timer = setInterval(() => {
                 if (!gameJalan) { clearInterval(timer); return; }
@@ -161,7 +149,8 @@
             gameJalan = false;
             waktu = 60; level = 1; skor = 0;
             pemain.x = 80; pemain.y = 200; pemain.ekor = [];
-            pemain.arahX = 1; pemain.arahY = 0; // Reset arah ke kanan
+            pemain.arahX = 1; pemain.arahY = 0;
+            pemain.kecepatan = pemain.kecepatanDasar; // Reset kecepatan pelan
             buah.x = 500; buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
@@ -196,7 +185,7 @@
             }
         }
 
-        // === GERAKAN OTOMATIS MAJU ===
+        // === GERAKAN OTOMATIS ===
         function gerakOtomatis() {
             pemain.x += pemain.arahX * pemain.kecepatan;
             pemain.y += pemain.arahY * pemain.kecepatan;
@@ -211,19 +200,24 @@
             }
         }
 
-        // === SISTEM EKOR ===
+        // === SISTEM EKOR & KECEPATAN ===
         function updateEkor() {
             pemain.ekor.unshift({x: pemain.x, y: pemain.y});
             while(pemain.ekor.length > skor) { pemain.ekor.pop(); }
         }
 
-        // === MAKAN BUAH ===
+        // === MAKAN BUAH & NAIK LEVEL ===
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700);
                 buah.y = acak(50, 350);
-                if (skor % 5 === 0) { level++; notifikasi(`Level ${level}! 🚀`); waktu += 5; }
+                if (skor % 5 === 0) { 
+                    level++; 
+                    pemain.kecepatan += 0.4; // Tiap level naik, makin cepat dikit
+                    notifikasi(`Level ${level}! Lebih Cepat! 🚀`); 
+                    waktu += 5; 
+                }
             }
         }
 
