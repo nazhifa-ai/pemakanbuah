@@ -163,7 +163,7 @@
             updateUI(); gambarSemua();
         }
 
-        // 🔴 BAGIAN UTAMA: LOOP TANPA BERHENTI
+        // 🔴 LOOP TERUS BERJALAN, TIDAK ADA STOP
         function loopGame() {
             if (!gameJalan) return;
             
@@ -175,7 +175,7 @@
             
             gambarSemua(); 
             updateUI(); 
-            requestAnimationFrame(loopGame); // Terus berjalan selamanya
+            requestAnimationFrame(loopGame);
         }
 
         function ubahArah() {
@@ -190,7 +190,7 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // 💀 HANYA INI YANG BIKIN KALAH: NABRAK DINDING
+        // 💀 HANYA NABRAK DINDING YANG BIKIN KALAH
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -204,18 +204,16 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // ⭐ TIDAK ADA BATAS MAKSIMAL LEVEL! NAIK TERUS SAMPAI KAPAN PUN
+        // ⭐ BAGIAN INI SUDAH DIUBAH: TIDAK ADA ANGKA 5, NAIK LEVEL & CEPAT TERUS TERUSAN
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
                 
-                // Kecepatan naik pelan, TIDAK ADA BATAS BERHENTI
-                if (skor % 5 === 0) { 
-                    level++; 
-                    pemain.kecepatan += 0.35; 
-                    notifikasi(`Level ${level}! Semakin Cepat! 🚀`); 
-                }
+                // NAIK LEVEL SETIAP KALI SKOR BERTAMBAH, MAKIN CEPAT TERUS, TIDAK ADA BATAS
+                level++; 
+                pemain.kecepatan += 0.15; 
+                notifikasi(`Level ${level}! Semakin Cepat! 🚀`); 
             }
         }
 
