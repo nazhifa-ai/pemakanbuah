@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemakan Buah - Main Sendiri 🍎</title>
+    <title>Pemakan Buah - Versi Panah Atas Bawah 🍎</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
@@ -71,6 +71,13 @@
             background: #27ae60;
             box-shadow: 0 0 10px #2ecc71;
         }
+        .kontrol-info {
+            margin-top: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +98,10 @@
         <button onclick="resetGame()">🔄 Ulangi</button>
     </div>
 
+    <div class="kontrol-info">
+        🎯 Kontrol: Gunakan **⬆️ Panah Atas** dan **⬇️ Panah Bawah** saja
+    </div>
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -98,12 +109,12 @@
         let gameJalan = false;
 
         // Objek Pemain & Buah
-        const pemain = {x: 80, y: 180, ukuran: 30, kecepatan: 5, warna: '#3498db'};
-        const buah = {x: acak(50,750), y: acak(50,350), ukuran: 25, warna: '#e67e22'};
+        const pemain = {x: 80, y: 180, ukuran: 30, kecepatan: 6, warna: '#3498db'};
+        const buah = {x: acak(200,750), y: acak(50,350), ukuran: 25, warna: '#e67e22'};
 
         const tombol = {};
-        window.addEventListener('keydown', e => tombol[e.key.toLowerCase()] = true);
-        window.addEventListener('keyup', e => tombol[e.key.toLowerCase()] = false);
+        window.addEventListener('keydown', e => tombol[e.key] = true);
+        window.addEventListener('keyup', e => tombol[e.key] = false);
 
         function acak(min, max) { return Math.floor(Math.random()*(max-min)+min); }
 
@@ -137,7 +148,7 @@
             gameJalan = false;
             waktu = 60; level = 1; skor = 0;
             pemain.x = 80; pemain.y = 180;
-            buah.x = acak(50,750); buah.y = acak(50,350);
+            buah.x = acak(200,750); buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
 
@@ -152,12 +163,14 @@
             requestAnimationFrame(loopGame);
         }
 
-        // === KONTROL SANGAT MUDAH ===
+        // === KONTROL DIUBAH: CUMA PAKAI PANAH ATAS & BAWAH ===
         function gerakPemain() {
-            if (tombol['w'] && pemain.y>0) pemain.y -= pemain.kecepatan;
-            if (tombol['s'] && pemain.y<canvas.height-pemain.ukuran) pemain.y += pemain.kecepatan;
-            if (tombol['a'] && pemain.x>0) pemain.x -= pemain.kecepatan;
-            if (tombol['d'] && pemain.x<canvas.width-pemain.ukuran) pemain.x += pemain.kecepatan;
+            if (tombol['ArrowUp'] && pemain.y > 0) {
+                pemain.y -= pemain.kecepatan;
+            }
+            if (tombol['ArrowDown'] && pemain.y < canvas.height - pemain.ukuran) {
+                pemain.y += pemain.kecepatan;
+            }
         }
 
         function cekMakan() {
@@ -169,7 +182,7 @@
         }
 
         function buahBaru() {
-            buah.x = acak(50,750); buah.y = acak(50,350);
+            buah.x = acak(200,750); buah.y = acak(50,350);
         }
 
         function cekLevel() {
