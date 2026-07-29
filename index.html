@@ -7,13 +7,47 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body {
-            background: linear-gradient(135deg, #EDE7F6, #D1C4E9);
+            background: linear-gradient(135deg, #EDE7F6, #D1C4E9, #C3B1E1);
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* ✨ LATAR BELAKANG ANIMASI CERAH ✨ */
+        .latar-animasi {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .lingkaran {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: mengembang 10s infinite ease-in-out;
+        }
+        .bintang-bergerak {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #fff, 0 0 15px #E1BEE7;
+            animation: kelapkelip 3s infinite alternate ease-in-out;
+        }
+        @keyframes mengembang {
+            0% { transform: scale(0.5); opacity: 0.4; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(0.5); opacity: 0.4; }
+        }
+        @keyframes kelapkelip {
+            0% { opacity: 0.4; transform: translateY(0); }
+            100% { opacity: 1; transform: translateY(-15px); }
         }
 
         /* LOGO */
@@ -21,11 +55,12 @@
             display: flex;
             gap: 20px;
             margin-bottom: 12px;
+            z-index: 2;
         }
         .logo-di-atas img {
             height: 72px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
         /* JUDUL */
@@ -35,7 +70,8 @@
             text-align: center;
             margin-bottom: 18px;
             font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(106, 27, 154, 0.2);
+            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.5);
+            z-index: 2;
         }
 
         /* INFO */
@@ -43,25 +79,28 @@
             display: flex;
             gap: 24px;
             margin-bottom: 20px;
+            z-index: 2;
         }
         .info-item {
-            background: linear-gradient(135deg, #9575CD, #7E57C2);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
             padding: 12px 28px;
             border-radius: 30px;
-            color: white;
+            color: #6A1B9A;
             font-weight: 600;
             font-size: 1.15rem;
-            box-shadow: 0 4px 15px rgba(126, 87, 194, 0.35);
-            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(106, 27, 154, 0.15);
         }
 
         /* AREA KANVAS */
         #gameCanvas {
-            border: none;
+            border: 4px solid rgba(255, 255, 255, 0.7);
             border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.25);
-            background: #FAF7FF;
+            box-shadow: 0 8px 30px rgba(106, 27, 154, 0.25), inset 0 0 20px rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.9);
             position: relative;
+            z-index: 2;
         }
 
         /* ✨ TULISAN TENGAH ✨ */
@@ -70,37 +109,55 @@
             top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #7E57C2, #6A1B9A);
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7, #CE93D8);
             padding: 22px 55px;
             border-radius: 35px;
-            color: white;
+            color: #4A148C;
             font-size: 1.9rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.4);
+            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.3);
             z-index: 10;
             transition: all 0.3s ease;
-            border: 3px solid #B39DDB;
+            border: 3px solid #FFFFFF;
+            animation: naikTurunTulisan 2s infinite alternate ease-in-out;
+        }
+        @keyframes naikTurunTulisan {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-50%, -50%) scale(1.05); }
         }
         .tulisan-tengah:hover {
-            transform: translate(-50%, -50%) scale(1.08);
-            box-shadow: 0 10px 30px rgba(106, 27, 154, 0.5);
+            box-shadow: 0 0 40px #CE93D8;
         }
 
         /* PETUNJUK */
         .petunjuk {
             margin-top: 20px;
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             padding: 12px 25px;
             border-radius: 25px;
             font-size: 1rem;
             color: #6A1B9A;
             font-weight: 500;
-            box-shadow: 0 3px 10px rgba(106, 27, 154, 0.1);
+            z-index: 2;
         }
     </style>
 </head>
 <body>
+
+    <!-- ✨ LATAR BELAKANG ANIMASI ✨ -->
+    <div class="latar-animasi">
+        <div class="lingkaran" style="width: 400px; height: 400px; top: -100px; left: -50px; animation-delay: 0s;"></div>
+        <div class="lingkaran" style="width: 300px; height: 300px; bottom: -50px; right: -50px; animation-delay: 3s;"></div>
+        <div class="bintang-bergerak" style="width: 8px; height: 8px; top: 15%; left: 15%; animation-delay: 0s;"></div>
+        <div class="bintang-bergerak" style="width: 12px; height: 12px; top: 25%; left: 80%; animation-delay: 0.5s;"></div>
+        <div class="bintang-bergerak" style="width: 6px; height: 6px; top: 70%; left: 10%; animation-delay: 1s;"></div>
+        <div class="bintang-bergerak" style="width: 10px; height: 10px; top: 60%; left: 90%; animation-delay: 1.5s;"></div>
+        <div class="bintang-bergerak" style="width: 7px; height: 7px; top: 40%; left: 50%; animation-delay: 2s;"></div>
+        <div class="bintang-bergerak" style="width: 9px; height: 9px; top: 80%; left: 70%; animation-delay: 2.5s;"></div>
+    </div>
 
     <div class="logo-di-atas">
         <img src="1sanden.jpeg" alt="Logo Sanden">
@@ -129,15 +186,27 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const elemenTulisan = document.getElementById('tulisanTengah');
-        let level = 1, skor = 0;
+        
+        // VARIABEL BERSIH & TANPA BATAS
+        let level = 1;
+        let skor = 0;
         let gameJalan = false;
+        let kecepatan = 3; // Stabil & aman
 
         const pemain = {
-            x: 80, y: 200, ukuran: 26, kecepatan: 3.2, kecepatanDasar: 3.2,
-            arahX: 1, arahY: 0, ekor: []
+            x: 100,
+            y: 200,
+            ukuran: 24,
+            arahX: kecepatan,
+            arahY: 0,
+            ekor: []
         };
 
-        const buah = {x: acak(100, 700), y: acak(50, 350), ukuran: 24, warna: '#D32F2F'};
+        const buah = {
+            x: Math.floor(Math.random() * 750) + 25,
+            y: Math.floor(Math.random() * 350) + 25,
+            ukuran: 22
+        };
 
         const tombol = {};
         window.addEventListener('keydown', e => {
@@ -146,117 +215,158 @@
         });
         window.addEventListener('keyup', e => tombol[e.key] = false);
 
-        function acak(min, max) { return Math.floor(Math.random()*(max-min)+min); }
-
+        // KLIK TENGAH
         function klikTengah() {
-            if (!gameJalan) mulaiGame();
+            if (!gameJalan) {
+                gameJalan = true;
+                elemenTulisan.style.display = 'none';
+                jalankanGame();
+            }
         }
 
-        function mulaiGame() {
-            gameJalan = true;
-            elemenTulisan.style.display = 'none';
-            loopGame();
+        // LOGIKA UTAMA
+        function jalankanGame() {
+            if (!gameJalan) return;
+
+            // UBAH ARAH
+            if (tombol['ArrowUp'] && pemain.arahY !== kecepatan) {
+                pemain.arahX = 0;
+                pemain.arahY = -kecepatan;
+            }
+            if (tombol['ArrowDown'] && pemain.arahY !== -kecepatan) {
+                pemain.arahX = 0;
+                pemain.arahY = kecepatan;
+            }
+            if (tombol['ArrowLeft'] && pemain.arahX !== kecepatan) {
+                pemain.arahX = -kecepatan;
+                pemain.arahY = 0;
+            }
+            if (tombol['ArrowRight'] && pemain.arahX !== -kecepatan) {
+                pemain.arahX = kecepatan;
+                pemain.arahY = 0;
+            }
+
+            // EKOR: UKURAN TETAP & JELAS
+            pemain.ekor.unshift({x: pemain.x, y: pemain.y});
+            while (pemain.ekor.length > skor) {
+                pemain.ekor.pop();
+            }
+
+            // GERAK
+            pemain.x += pemain.arahX;
+            pemain.y += pemain.arahY;
+
+            // CEK DINDING
+            if (pemain.x < 0 || pemain.x > canvas.width - pemain.ukuran ||
+                pemain.y < 0 || pemain.y > canvas.height - pemain.ukuran) {
+                resetGame();
+                return;
+            }
+
+            // CEK MAKAN BUAH -> TANPA BATAS
+            if (Math.abs(pemain.x - buah.x) < pemain.ukuran && 
+                Math.abs(pemain.y - buah.y) < pemain.ukuran) {
+                skor++;
+                buah.x = Math.floor(Math.random() * 750) + 25;
+                buah.y = Math.floor(Math.random() * 350) + 25;
+
+                if (skor % 5 === 0) {
+                    level++;
+                    if (kecepatan < 6) kecepatan += 0.25;
+                }
+            }
+
+            // GAMBAR
+            gambarLatarDalam();
+            gambarEkor();
+            gambarPemain();
+            gambarBuah();
+            updateUI();
+
+            requestAnimationFrame(jalankanGame);
         }
 
+        // RESET
         function resetGame() {
             gameJalan = false;
-            level = 1; skor = 0;
-            pemain.x = 80; pemain.y = 200; pemain.ekor = [];
-            pemain.arahX = 1; pemain.arahY = 0;
-            pemain.kecepatan = pemain.kecepatanDasar;
-            buah.x = acak(100, 700); buah.y = acak(50, 350);
-            updateUI(); gambarSemua();
+            level = 1;
+            skor = 0;
+            kecepatan = 3;
+            pemain.x = 100;
+            pemain.y = 200;
+            pemain.arahX = kecepatan;
+            pemain.arahY = 0;
+            pemain.ekor = [];
+            buah.x = Math.floor(Math.random() * 750) + 25;
+            buah.y = Math.floor(Math.random() * 350) + 25;
+            
             elemenTulisan.innerText = 'ULANGI';
             elemenTulisan.style.display = 'block';
+            gambarLatarDalam();
         }
 
-        // 🔴 LOOP TANPA BATAS & TANPA HENTI
-        function loopGame() {
-            if (!gameJalan) return;
-            ubahArah(); gerakOtomatis(); updateEkor(); cekTabrakanDinding(); cekMakanBuah();
-            gambarSemua(); updateUI(); requestAnimationFrame(loopGame);
-        }
-
-        function ubahArah() {
-            if (tombol['ArrowUp'] && pemain.arahY !== 1) { pemain.arahX = 0; pemain.arahY = -1; }
-            if (tombol['ArrowDown'] && pemain.arahY !== -1) { pemain.arahX = 0; pemain.arahY = 1; }
-            if (tombol['ArrowLeft'] && pemain.arahX !== 1) { pemain.arahX = -1; pemain.arahY = 0; }
-            if (tombol['ArrowRight'] && pemain.arahX !== -1) { pemain.arahX = 1; pemain.arahY = 0; }
-        }
-
-        function gerakOtomatis() {
-            pemain.x += pemain.arahX * pemain.kecepatan;
-            pemain.y += pemain.arahY * pemain.kecepatan;
-        }
-
-        // 💀 HANYA KALAH JIKA NABRAK DINDING
-        function cekTabrakanDinding() {
-            if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
-                pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
-                resetGame();
-            }
-        }
-
-        function updateEkor() {
-            pemain.ekor.unshift({x: pemain.x, y: pemain.y});
-            while(pemain.ekor.length > skor) pemain.ekor.pop();
-        }
-
-        // ⭐ NAIK LEVEL TERUS, TIDAK ADA BATAS APAPUN
-        function cekMakanBuah() {
-            if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
-                skor++;
-                buah.x = acak(100, 700); buah.y = acak(50, 350);
-                if (skor % 5 === 0) { level++; pemain.kecepatan += 0.2; }
-            }
-        }
-
-        // 🎨 TAMPILAN LATAR & GAMBAR
-        function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
-
-        function gambarLatar() {
-            let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        // LATAR DALAM KANVAS
+        function gambarLatarDalam() {
+            let grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
             grad.addColorStop(0, '#FFFFFF');
-            grad.addColorStop(1, '#F3E5F5');
+            grad.addColorStop(1, '#F8F5FF');
             ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = 'rgba(206, 147, 216, 0.35)';
-            ctx.beginPath(); ctx.arc(120, 100, 70, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(680, 300, 90, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(600, 80, 50, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(200, 350, 80, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(0,0,canvas.width,canvas.height);
         }
 
+        // ✨ GAMBAR EKOR: BESAR, PANJANG & JELAS ✨
         function gambarEkor() {
             for(let i=0; i<pemain.ekor.length; i++) {
-                let b = pemain.ekor[i];
-                ctx.fillStyle = `rgb(${120-i*2}, ${80+i*4}, ${200+i*10})`;
-                ctx.shadowBlur=4; ctx.shadowColor='#B39DDB';
-                ctx.beginPath(); ctx.arc(b.x,b.y,pemain.ukuran/2 - i*0.6,0,Math.PI*2); ctx.fill();
-            } ctx.shadowBlur=0;
+                // Ukuran sama semua, tidak mengecil
+                ctx.fillStyle = `rgb(${120 + i*2}, ${80 + i*5}, ${220 - i*2})`;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#D1C4E9';
+                ctx.beginPath();
+                ctx.arc(pemain.ekor[i].x, pemain.ekor[i].y, pemain.ukuran/2, 0, Math.PI*2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
         }
 
+        // GAMBAR KEPALA
         function gambarPemain() {
-            ctx.fillStyle = '#4A148C'; ctx.shadowColor = '#7E57C2'; ctx.shadowBlur=12;
-            ctx.beginPath(); ctx.arc(pemain.x,pemain.y,pemain.ukuran/2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(pemain.x+7,pemain.y-4,5,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='black'; ctx.beginPath(); ctx.arc(pemain.x+8,pemain.y-4,2.5,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#7B1FA2'; // Ungu cerah
+            ctx.shadowColor = '#CE93D8';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(pemain.x, pemain.y, pemain.ukuran/2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // MATA
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(pemain.x+7, pemain.y-4, 5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.beginPath(); ctx.arc(pemain.x+8, pemain.y-4, 2.5, 0, Math.PI*2); ctx.fill();
         }
 
+        // GAMBAR BUAH
         function gambarBuah() {
-            ctx.fillStyle = buah.warna; ctx.shadowColor='#EF9A9A'; ctx.shadowBlur=15;
-            ctx.beginPath(); ctx.arc(buah.x,buah.y,buah.ukuran/2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            ctx.fillStyle='#2E7D32'; ctx.fillRect(buah.x-2, buah.y-14, 4, 8);
+            ctx.fillStyle = '#EF5350';
+            ctx.shadowColor = '#FFCDD2';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(buah.x, buah.y, buah.ukuran/2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#2E7D32';
+            ctx.fillRect(buah.x-2, buah.y-12, 4, 7);
         }
 
+        // UPDATE ANGKA
         function updateUI() {
-            document.getElementById('level').innerText=level;
-            document.getElementById('skor').innerText=skor;
-            document.getElementById('panjang').innerText=skor;
+            document.getElementById('level').innerText = level;
+            document.getElementById('skor').innerText = skor;
+            document.getElementById('panjang').innerText = skor;
         }
 
-        gambarSemua();
+        // TAMPILAN AWAL
+        gambarLatarDalam();
     </script>
 </body>
 </html>
