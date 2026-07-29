@@ -11,7 +11,6 @@
             min-height: 100vh;
             padding: 20px;
             color: #4A4063;
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -22,8 +21,6 @@
             color: #7B2CBF;
             text-shadow: 0 0 8px rgba(123, 44, 191, 0.3);
             margin-bottom: 15px;
-            position: relative;
-            z-index: 20;
         }
         .info {
             width: 800px;
@@ -37,8 +34,6 @@
             margin-bottom: 15px;
             backdrop-filter: blur(6px);
             border: 1px solid rgba(255,255,255,0.8);
-            position: relative;
-            z-index: 20;
         }
         #notifikasi {
             position: fixed;
@@ -60,16 +55,12 @@
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
             background: #F8F5FF;
-            position: relative;
-            z-index: 20;
         }
         .tombol {
             margin-top: 15px;
             display: flex;
             gap: 12px;
             justify-content: center;
-            position: relative;
-            z-index: 20;
         }
         button {
             padding: 10px 22px;
@@ -118,19 +109,18 @@
         // Objek Cacing
         const pemain = {
             x: 80, y: 200, ukuran: 26, kecepatan: 3.5, kecepatanDasar: 3.5,
-            arahX: 1, arahY: 0,
-            ekor: []
+            arahX: 1, arahY: 0, ekor: []
         };
 
         // Buah
         const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#E63946'};
 
-        // ✅ LOGO DI DALAM KANVAS, BERJER TENGAH & SAMAR (PERSIS CONTOH)
+        // ✅ LOGO DI DALAM KANVAS, TENGAH, SANGAT SAMAR (PERSIS CONTOH)
         const daftarLogo = [
-            {src: '1sanden.jpeg', x: 150, y: 160},
-            {src: 'logosklh.jpeg', x: 280, y: 160},
-            {src: 'mk.jpeg', x: 410, y: 160},
-            {src: 'rpl.jpeg', x: 540, y: 160}
+            {src: '1sanden.jpeg', x: 155, y: 155},
+            {src: 'logosklh.jpeg', x: 285, y: 155},
+            {src: 'mk.jpeg', x: 415, y: 155},
+            {src: 'rpl.jpeg', x: 545, y: 155}
         ];
 
         const tombol = {};
@@ -178,41 +168,22 @@
 
         function loopGame() {
             if (!gameJalan) return;
-
-            ubahArah();
-            gerakOtomatis();
-            updateEkor();
-            cekTabrakanDinding();
-            cekMakanBuah();
-            gambarSemua();
-            updateUI();
-
-            requestAnimationFrame(loopGame);
+            ubahArah(); gerakOtomatis(); updateEkor(); cekTabrakanDinding(); cekMakanBuah();
+            gambarSemua(); updateUI(); requestAnimationFrame(loopGame);
         }
 
-        // === PENGENDALIAN ARAH ===
         function ubahArah() {
-            if (tombol['ArrowUp'] && pemain.arahY !== 1) {
-                pemain.arahX = 0; pemain.arahY = -1;
-            }
-            if (tombol['ArrowDown'] && pemain.arahY !== -1) {
-                pemain.arahX = 0; pemain.arahY = 1;
-            }
-            if (tombol['ArrowLeft'] && pemain.arahX !== 1) {
-                pemain.arahX = -1; pemain.arahY = 0;
-            }
-            if (tombol['ArrowRight'] && pemain.arahX !== -1) {
-                pemain.arahX = 1; pemain.arahY = 0;
-            }
+            if (tombol['ArrowUp'] && pemain.arahY !== 1) { pemain.arahX = 0; pemain.arahY = -1; }
+            if (tombol['ArrowDown'] && pemain.arahY !== -1) { pemain.arahX = 0; pemain.arahY = 1; }
+            if (tombol['ArrowLeft'] && pemain.arahX !== 1) { pemain.arahX = -1; pemain.arahY = 0; }
+            if (tombol['ArrowRight'] && pemain.arahX !== -1) { pemain.arahX = 1; pemain.arahY = 0; }
         }
 
-        // === GERAKAN OTOMATIS ===
         function gerakOtomatis() {
             pemain.x += pemain.arahX * pemain.kecepatan;
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // === CEK NABRAK DINDING ===
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -221,31 +192,21 @@
             }
         }
 
-        // === SISTEM EKOR & KECEPATAN ===
         function updateEkor() {
             pemain.ekor.unshift({x: pemain.x, y: pemain.y});
-            while(pemain.ekor.length > skor) { pemain.ekor.pop(); }
+            while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // === MAKAN BUAH & NAIK LEVEL ===
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
-                buah.x = acak(100, 700);
-                buah.y = acak(50, 350);
-                if (skor % 5 === 0) { 
-                    level++; 
-                    pemain.kecepatan += 0.4;
-                    notifikasi(`Level ${level}! Lebih Cepat! 🚀`); 
-                    waktu += 5; 
-                }
+                buah.x = acak(100, 700); buah.y = acak(50, 350);
+                if (skor % 5 === 0) { level++; pemain.kecepatan += 0.4; notifikasi(`Level ${level}! 🚀`); waktu += 5; }
             }
         }
 
-        // === TAMPILAN UTAMA ===
         function gambarSemua() { gambarLatar(); gambarLogoSamar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
-        // === LATAR BELAKANG DALAM GAME (4 AWAN) ===
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
             grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
@@ -261,15 +222,15 @@
             ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
         }
 
-        // === GAMBAR LOGO SAMAR DI TENGAH (KUNCI SUKSES) ===
+        // 🔑 BAGIAN LOGO SAMAR (OPACITY 0.1 = SANGAR TIPIS)
         function gambarLogoSamar() {
-            ctx.globalAlpha = 0.12; // SANGAT SAMAR, PERSIS CONTOH
+            ctx.globalAlpha = 0.10; // Semakin kecil semakin samar
             daftarLogo.forEach(item => {
                 let img = new Image();
                 img.src = item.src;
                 img.onload = () => ctx.drawImage(img, item.x, item.y, 90, 90);
             });
-            ctx.globalAlpha = 1; // KEMBALI NORMAL
+            ctx.globalAlpha = 1.0; // Kembali normal untuk gambar lain
         }
 
         function gambarEkor() {
@@ -283,8 +244,6 @@
         function gambarPemain() {
             ctx.fillStyle = '#7B2CBF'; ctx.shadowColor = '#9D4EDD'; ctx.shadowBlur=10;
             ctx.beginPath(); ctx.arc(pemain.x,pemain.y,pemain.ukuran/2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            
-            // Mata
             ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(pemain.x+7,pemain.y-4,5,0,Math.PI*2); ctx.fill();
             ctx.fillStyle='black'; ctx.beginPath(); ctx.arc(pemain.x+8,pemain.y-4,2.5,0,Math.PI*2); ctx.fill();
         }
