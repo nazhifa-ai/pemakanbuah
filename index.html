@@ -17,30 +17,13 @@
             align-items: center;
         }
 
-        /* === LOGO DI TENGAH SELURUH LATAR BELAKANG (SANGAT SAMAR) === */
-        .logo-bg-tengah {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            gap: 22px;
-            opacity: 0.09; /* Sangat samar, tidak mengganggu */
-            pointer-events: none;
-            z-index: 1; /* Paling belakang di bawah semua elemen */
-        }
-        .logo-bg-tengah img {
-            height: 90px;
-            width: auto;
-        }
-
         h1 {
             font-size: 2.3rem;
             color: #7B2CBF;
             text-shadow: 0 0 8px rgba(123, 44, 191, 0.3);
             margin-bottom: 15px;
             position: relative;
-            z-index: 10;
+            z-index: 20;
         }
         .info {
             width: 800px;
@@ -55,7 +38,7 @@
             backdrop-filter: blur(6px);
             border: 1px solid rgba(255,255,255,0.8);
             position: relative;
-            z-index: 10;
+            z-index: 20;
         }
         #notifikasi {
             position: fixed;
@@ -78,7 +61,7 @@
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
             background: #F8F5FF;
             position: relative;
-            z-index: 10;
+            z-index: 20;
         }
         .tombol {
             margin-top: 15px;
@@ -86,7 +69,7 @@
             gap: 12px;
             justify-content: center;
             position: relative;
-            z-index: 10;
+            z-index: 20;
         }
         button {
             padding: 10px 22px;
@@ -108,14 +91,6 @@
     </style>
 </head>
 <body>
-
-    <!-- 🔴 LOGO DI TENGAH LATAR BELAKANG UTAMA -->
-    <div class="logo-bg-tengah">
-        <img src="1sanden.jpeg" alt="Logo Sanden">
-        <img src="logosklh.jpeg" alt="Logo Sekolah">
-        <img src="mk.jpeg" alt="Logo MOKO">
-        <img src="rpl.jpeg" alt="Logo RPL">
-    </div>
 
     <h1>🐍 CACING PEMAKAN BUAH 🍎</h1>
     <div id="notifikasi"></div>
@@ -149,6 +124,14 @@
 
         // Buah
         const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#E63946'};
+
+        // ✅ LOGO DI DALAM KANVAS, BERJER TENGAH & SAMAR (PERSIS CONTOH)
+        const daftarLogo = [
+            {src: '1sanden.jpeg', x: 150, y: 160},
+            {src: 'logosklh.jpeg', x: 280, y: 160},
+            {src: 'mk.jpeg', x: 410, y: 160},
+            {src: 'rpl.jpeg', x: 540, y: 160}
+        ];
 
         const tombol = {};
         window.addEventListener('keydown', e => {
@@ -190,7 +173,7 @@
             pemain.arahX = 1; pemain.arahY = 0;
             pemain.kecepatan = pemain.kecepatanDasar;
             buah.x = 500; buah.y = acak(50,350);
-            updateUI(); gambarLatar();
+            updateUI(); gambarSemua();
         }
 
         function loopGame() {
@@ -259,10 +242,10 @@
             }
         }
 
-        // === GAMBARAN ===
-        function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
+        // === TAMPILAN UTAMA ===
+        function gambarSemua() { gambarLatar(); gambarLogoSamar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
-        // === BACKGROUND DALAM GAME: 4 AWAN ===
+        // === LATAR BELAKANG DALAM GAME (4 AWAN) ===
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
             grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
@@ -272,13 +255,21 @@
             ctx.beginPath(); ctx.arc(720, 60, 35, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
 
             ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            gambarAwan(120, 80);   // Awan 1
-            gambarAwan(380, 60);   // Awan 2
-            gambarAwan(550, 70);   // ✅ AWAN TAMBAHAN
-            gambarAwan(680, 90);   // Awan 3
+            gambarAwan(120, 80); gambarAwan(380, 60); gambarAwan(550, 70); gambarAwan(680, 90);
         }
         function gambarAwan(x,y) {
             ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
+        }
+
+        // === GAMBAR LOGO SAMAR DI TENGAH (KUNCI SUKSES) ===
+        function gambarLogoSamar() {
+            ctx.globalAlpha = 0.12; // SANGAT SAMAR, PERSIS CONTOH
+            daftarLogo.forEach(item => {
+                let img = new Image();
+                img.src = item.src;
+                img.onload = () => ctx.drawImage(img, item.x, item.y, 90, 90);
+            });
+            ctx.globalAlpha = 1; // KEMBALI NORMAL
         }
 
         function gambarEkor() {
@@ -311,7 +302,7 @@
             document.getElementById('panjang').innerText=skor;
         }
 
-        gambarLatar(); gambarPemain(); gambarBuah();
+        gambarSemua();
     </script>
 </body>
 </html>
