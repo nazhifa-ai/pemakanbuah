@@ -7,41 +7,40 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
-            /* GANTI BACKGROUND JADI UNGU LILAC KALEM */
             background: linear-gradient(to bottom, #B8A9C9, #F5F0FF);
             min-height: 100vh;
             padding: 20px;
-            color: #4A4063; /* Warna teks disesuaikan agar terbaca di latar ungu */
+            color: #4A4063;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* === LOGO DI TENGAH LATAR BELAKANG (SAMAR) === */
-        .logo-tengah {
-            position: fixed;
-            top: 50%;
+        /* === LOGO DI TENGAH AREA AWAN / ATAS KANVAS, SAMAR === */
+        .logo-di-awan {
+            position: absolute;
+            top: 180px; /* Pas di area awan */
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             display: flex;
-            gap: 25px;
-            opacity: 0.10; /* Lebih samar agar makin kalem */
+            gap: 20px;
+            opacity: 0.08; /* Sangat samar */
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
-        .logo-tengah img {
-            height: 90px;
+        .logo-di-awan img {
+            height: 85px;
             width: auto;
         }
 
         h1 {
             font-size: 2.3rem;
-            color: #7B2CBF; /* Ungu tua cerah */
+            color: #7B2CBF;
             text-shadow: 0 0 8px rgba(123, 44, 191, 0.3);
             margin-bottom: 15px;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         .info {
             width: 800px;
@@ -56,7 +55,7 @@
             backdrop-filter: blur(6px);
             border: 1px solid rgba(255,255,255,0.8);
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         #notifikasi {
             position: fixed;
@@ -79,7 +78,7 @@
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
             background: #F8F5FF;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         .tombol {
             margin-top: 15px;
@@ -87,7 +86,7 @@
             gap: 12px;
             justify-content: center;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         button {
             padding: 10px 22px;
@@ -110,8 +109,8 @@
 </head>
 <body>
 
-    <!-- 🔴 LOGO DENGAN NAMA FILE YANG TEPAT -->
-    <div class="logo-tengah">
+    <!-- 🔴 LOGO DITARUH DI AREA AWAN / ATAS KANVAS -->
+    <div class="logo-di-awan">
         <img src="1sanden.jpeg" alt="Logo Sanden">
         <img src="logosklh.jpeg" alt="Logo Sekolah">
         <img src="mk.jpeg" alt="Logo MOKO">
@@ -263,7 +262,7 @@
         // === GAMBARAN ===
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
-        // === BACKGROUND DALAM GAME (DI DALAM KANVAS) ===
+        // === BACKGROUND DALAM GAME: DITAMBAH 1 AWAN LAGI ===
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
             grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
@@ -273,7 +272,10 @@
             ctx.beginPath(); ctx.arc(720, 60, 35, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
 
             ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            gambarAwan(120, 80); gambarAwan(350, 50); gambarAwan(600, 90);
+            gambarAwan(120, 80);   // Awan 1
+            gambarAwan(350, 50);   // Awan 2
+            gambarAwan(550, 75);   // ✅ AWAN BARU DITAMBAH
+            gambarAwan(600, 90);   // Awan 3
         }
         function gambarAwan(x,y) {
             ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
