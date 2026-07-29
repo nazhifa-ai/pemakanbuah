@@ -17,20 +17,20 @@
             align-items: center;
         }
 
-        /* === LOGO DI TENGAH AREA AWAN / ATAS KANVAS, SAMAR === */
-        .logo-di-awan {
-            position: absolute;
-            top: 180px; /* Pas di area awan */
+        /* === LOGO DI TENGAH SELURUH LATAR BELAKANG (SANGAT SAMAR) === */
+        .logo-bg-tengah {
+            position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             display: flex;
-            gap: 20px;
-            opacity: 0.08; /* Sangat samar */
+            gap: 22px;
+            opacity: 0.09; /* Sangat samar, tidak mengganggu */
             pointer-events: none;
-            z-index: 1;
+            z-index: 1; /* Paling belakang di bawah semua elemen */
         }
-        .logo-di-awan img {
-            height: 85px;
+        .logo-bg-tengah img {
+            height: 90px;
             width: auto;
         }
 
@@ -40,7 +40,7 @@
             text-shadow: 0 0 8px rgba(123, 44, 191, 0.3);
             margin-bottom: 15px;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
         .info {
             width: 800px;
@@ -55,7 +55,7 @@
             backdrop-filter: blur(6px);
             border: 1px solid rgba(255,255,255,0.8);
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
         #notifikasi {
             position: fixed;
@@ -78,7 +78,7 @@
             box-shadow: 0 0 25px rgba(199, 125, 255, 0.35);
             background: #F8F5FF;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
         .tombol {
             margin-top: 15px;
@@ -86,7 +86,7 @@
             gap: 12px;
             justify-content: center;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
         button {
             padding: 10px 22px;
@@ -109,8 +109,8 @@
 </head>
 <body>
 
-    <!-- 🔴 LOGO DITARUH DI AREA AWAN / ATAS KANVAS -->
-    <div class="logo-di-awan">
+    <!-- 🔴 LOGO DI TENGAH LATAR BELAKANG UTAMA -->
+    <div class="logo-bg-tengah">
         <img src="1sanden.jpeg" alt="Logo Sanden">
         <img src="logosklh.jpeg" alt="Logo Sekolah">
         <img src="mk.jpeg" alt="Logo MOKO">
@@ -262,7 +262,7 @@
         // === GAMBARAN ===
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
-        // === BACKGROUND DALAM GAME: DITAMBAH 1 AWAN LAGI ===
+        // === BACKGROUND DALAM GAME: 4 AWAN ===
         function gambarLatar() {
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
             grad.addColorStop(0, '#E0D4FF'); grad.addColorStop(1, '#F3E8FF');
@@ -273,9 +273,9 @@
 
             ctx.fillStyle = 'rgba(255,255,255,0.9)';
             gambarAwan(120, 80);   // Awan 1
-            gambarAwan(350, 50);   // Awan 2
-            gambarAwan(550, 75);   // ✅ AWAN BARU DITAMBAH
-            gambarAwan(600, 90);   // Awan 3
+            gambarAwan(380, 60);   // Awan 2
+            gambarAwan(550, 70);   // ✅ AWAN TAMBAHAN
+            gambarAwan(680, 90);   // Awan 3
         }
         function gambarAwan(x,y) {
             ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.arc(x+25,y-8,25,0,Math.PI*2); ctx.arc(x+50,y,20,0,Math.PI*2); ctx.fill();
