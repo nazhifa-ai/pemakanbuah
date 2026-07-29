@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemakan Buah - Bertambah Ekor 🍎</title>
+    <title>Pemakan Buah - Gerak Bebas 🍎</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
@@ -105,7 +105,7 @@
     </div>
 
     <div class="kontrol-info">
-        ✅ GUNAKAN HANYA: ⬆️ (Atas) & ⬇️ (Bawah) | 🍎 Makan Buah = Ekor Bertambah!
+        ✅ GUNAKAN: ⬆️ ⬇️ ⬅️ ➡️ (Semua Panah) | 🍎 Makan Buah = Ekor Bertambah!
     </div>
 
     <script>
@@ -119,16 +119,16 @@
             x: 80, y: 180, ukuran: 28, kecepatan: 6, warna: '#3498db',
             ekor: [] // Menyimpan bagian ekor
         };
-        const panjangBagian = 22; // Jarak antar bagian ekor
 
-        // Buah
-        const buah = {x: 450, y: acak(50,350), ukuran: 24, warna: '#e67e22'};
+        // Buah (berada di area kanan)
+        const buah = {x: 550, y: acak(50,350), ukuran: 24, warna: '#e67e22'};
 
         // Tombol Kontrol
         const tombol = {};
         window.addEventListener('keydown', e => {
             tombol[e.key] = true;
-            if(["ArrowUp","ArrowDown"].includes(e.key)) e.preventDefault();
+            // Mencegah halaman bergulir saat tekan panah
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
         });
         window.addEventListener('keyup', e => tombol[e.key] = false);
 
@@ -162,8 +162,8 @@
         function resetGame() {
             gameJalan = false;
             waktu = 60; level = 1; skor = 0;
-            pemain.y = 180; pemain.ekor = []; // Hapus semua ekor
-            buah.y = acak(50,350);
+            pemain.x = 80; pemain.y = 180; pemain.ekor = []; // Hapus semua ekor
+            buah.x = 550; buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
 
@@ -179,10 +179,12 @@
             requestAnimationFrame(loopGame);
         }
 
-        // === KONTROL ATAS & BAWAH ===
+        // === KONTROL LENGKAP: ATAS, BAWAH, KIRI, KANAN ===
         function gerakPemain() {
             if (tombol['ArrowUp'] && pemain.y > 0) pemain.y -= pemain.kecepatan;
             if (tombol['ArrowDown'] && pemain.y < canvas.height - pemain.ukuran) pemain.y += pemain.kecepatan;
+            if (tombol['ArrowLeft'] && pemain.x > 0) pemain.x -= pemain.kecepatan;
+            if (tombol['ArrowRight'] && pemain.x < canvas.width - pemain.ukuran) pemain.x += pemain.kecepatan;
         }
 
         // === SISTEM EKOR: Setiap makan buah, bertambah satu bagian ===
@@ -200,6 +202,8 @@
         function cekMakan() {
             if (Math.abs(pemain.x - buah.x) < 35 && Math.abs(pemain.y - buah.y) < 35) {
                 skor++;
+                // Buah pindah ke posisi baru (tetap di sisi kanan)
+                buah.x = acak(450, 750);
                 buah.y = acak(50,350);
                 cekLevel();
             }
