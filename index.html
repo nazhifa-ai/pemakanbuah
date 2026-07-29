@@ -149,7 +149,7 @@
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('MAIN BEBAS! Hanya Nabrak = Kalah!');
+            notifikasi('✅ MAIN BEBAS! Hanya Nabrak = Kalah!');
             loopGame();
         }
 
@@ -181,7 +181,7 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
-        // 🔴 HANYA KALAH JIKA NABRAK DINDING
+        // 🔴 HANYA KALAH JIKA NABRAK
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
@@ -195,12 +195,11 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
-        // ✅ TIDAK ADA BATAS LEVEL/SKOR: MAKAN TERUS SAMPAI KAPAN PUN
+        // ✅ TANPA BATAS LEVEL/SKOR
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
-                // Kecepatan naik terus, TIDAK BERHENTI DI LEVEL 5
                 if (skor % 5 === 0) { 
                     level++; 
                     pemain.kecepatan += 0.35; 
@@ -209,22 +208,24 @@
             }
         }
 
-        // ✅ LATAR KOTAK-KOTAK HALUS UNGU (TIDAK POLOS, TIDAK ADA AWAN)
+        // 🆕 BACKGROUND BARU: LINGKARAN LEMBUT & GRADASI (BUKAN GARIS/TITIK)
         function gambarSemua() { gambarLatar(); gambarEkor(); gambarPemain(); gambarBuah(); }
 
         function gambarLatar() {
-            ctx.fillStyle = '#F0EBFF';
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            
-            // Garis kotak-kotak halus
-            ctx.strokeStyle = '#E0D6FF';
-            ctx.lineWidth = 1;
-            for(let i = 0; i < canvas.width; i += 25) {
-                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-            }
-            for(let j = 0; j < canvas.height; j += 25) {
-                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
-            }
+            // Warna dasar gradasi ungu lembut
+            let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#F3EDFF');
+            grad.addColorStop(1, '#E9DFFF');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Lingkaran besar transparan sebagai hiasan
+            ctx.fillStyle = 'rgba(224, 214, 255, 0.4)';
+            ctx.beginPath(); ctx.arc(100, 80, 60, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(700, 320, 80, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(650, 60, 45, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(150, 350, 70, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(400, 200, 90, 0, Math.PI*2); ctx.fill();
         }
 
         function gambarEkor() {
