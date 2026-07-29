@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemakan Buah 🍎</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #2c3e50;
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        h1 {
+            font-size: 2.3rem;
+            color: #ffdd00;
+            text-shadow: 0 0 10px #ffdd00;
+            margin-bottom: 15px;
+        }
+        .info {
+            width: 800px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        #notifikasi {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e74c3c;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 100;
+            display: none;
+        }
+        #gameCanvas {
+            border: 3px solid #2ecc71;
+            border-radius: 8px;
+            background: #ecf0f1;
+        }
+        .tombol {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 22px;
+            background: #2ecc71;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #27ae60;
+            box-shadow: 0 0 10px #2ecc71;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🍎 PEMAKAN BUAH 🍎</h1>
+    <div id="notifikasi"></div>
+
+    <div class="info">
+        <div>⏱️ Waktu: <span id="waktu">60</span> dtk</div>
+        <div>📈 Level: <span id="level">1</span></div>
+        <div>👤 Kamu: <span id="skor1">0</span></div>
+        <div>🤖 Lawan: <span id="skor2">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+    <div class="tombol">
+        <button onclick="mulaiGame()">🎮 Mulai</button>
+        <button onclick="resetGame()">🔄 Ulangi</button>
+        <button onclick="setMode('komputer')">🤖 Lawan Komputer</button>
+        <button onclick="setMode('berdua')">👥 Main Berdua</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let waktu = 60, level = 1, skor1 = 0, skor2 = 0;
+        let gameJalan = false;
+        let modeMain = 'komputer';
+
+        // Objek
+        const p1 = {x: 80, y: 180, ukuran: 30, kecepatan: 5, warna: '#3498db'};
+        const p2 = {x: 680, y: 180, ukuran: 30, kecepatan: 4.5, warna: '#e74c3c'};
+        const buah = {x: acak(50,750), y: acak(50,350), ukuran: 25, warna: '#e67e22'};
+
+        const tombol = {};
+        window.addEventListener('keydown', e => tombol[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => tombol[e.key.toLowerCase()] = false);
+
+        function acak(min, max) { return Math.floor(Math.random()*(max-min)+min); }
+
+        function setMode(m) {
+            modeMain = m;
+            notifikasi(m === 'komputer' ? 'Mode: Lawan Komputer 🤖' : 'Mode: Main Berdua 👥');
+        }
+
+        function notifikasi(teks) {
+            const n = document.getElementById('notifikasi');
+            n.innerText = teks; n.style.display = 'block';
+            setTimeout(() => n.style.display = 'none', 2000);
+        }
+
+        function mulaiGame() {
+            if (gameJalan) return;
+            gameJalan = true;
+            notifikasi('Permainan Dimulai! 🎮');
+            
+            // Timer
+            const timer = setInterval(() => {
+                if (!gameJalan) { clearInterval(timer); return; }
+                waktu--;
+                document.getElementById('waktu').innerText = waktu;
+                if (waktu <= 0) {
+                    gameJalan = false;
+                    tentukanPemenang();
+                    clearInterval(timer);
+                }
+            }, 1000);
+
+            loopGame();
+        }
+
+        function resetGame() {
+            gameJalan = false;
+            waktu = 60; level = 1; skor1 = skor2 = 0;
+            p1.x = 80; p1.y = 180; p2.x = 680; p2.y = 180;
+            buah.x = acak(50,750); buah.y = acak(50,350);
+            updateUI(); gambarLatar();
+        }
+
+        function loopGame() {
+            if (!gameJalan) return;
+
+            gerakP1();
+            modeMain==='berdua' ? gerakP2() : gerakKomputer();
+            cekMakan(); updateUI();
+            gambarLatar(); gambarBenda(p1); gambarBenda(p2); gambarBuah();
+
+            requestAnimationFrame(loopGame);
+        }
+
+        // === KONTROL SANGAT MUDAH ===
+        function gerakP1() {
+            if (tombol['w'] && p1.y>0) p1.y -= p1.kecepatan;
+            if (tombol['s'] && p1.y<canvas.height-p1.ukuran) p1.y += p1.kecepatan;
+            if (tombol['a'] && p1.x>0) p1.x -= p1.kecepatan;
+            if (tombol['d'] && p1.x<canvas.width-p1.ukuran) p1.x += p1.kecepatan;
+        }
+
+        function gerakP2() {
+            if (tombol['arrowup'] && p2.y>0) p2.y -= p2.kecepatan;
+            if (tombol['arrowdown'] && p2.y<canvas.height-p2.ukuran) p2.y += p2.kecepatan;
+            if (tombol['arrowleft'] && p2.x>0) p2.x -= p2.kecepatan;
+            if (tombol['arrowright'] && p2.x<canvas.width-p2.ukuran) p2.x += p2.kecepatan;
+        }
+
+        function gerakKomputer() {
+            const k = p2.kecepatan + (level*0.2);
+            if (buah.x < p2.x) p2.x -= k;
+            if (buah.x > p2.x) p2.x += k;
+            if (buah.y < p2.y) p2.y -= k;
+            if (buah.y > p2.y) p2.y += k;
+        }
+
+        function cekMakan() {
+            // P1 Makan
+            if (Math.abs(p1.x - buah.x) < 25 && Math.abs(p1.y - buah.y) < 25) {
+                skor1++;
+                buahBaru();
+                cekLevel();
+            }
+            // P2 Makan
+            if (Math.abs(p2.x - buah.x) < 25 && Math.abs(p2.y - buah.y) < 25) {
+                skor2++;
+                buahBaru();
+                cekLevel();
+            }
+        }
+
+        function buahBaru() {
+            buah.x = acak(50,750); buah.y = acak(50,350);
+        }
+
+        function cekLevel() {
+            if ((skor1+skor2)%5===0 && skor1+skor2>0) {
+                level++; notifikasi(`Level ${level}! 🚀`); waktu += 5;
+            }
+        }
+
+        function tentukanPemenang() {
+            if (skor1>skor2) notifikasi('🎉 KAMU MENANG! 🎉');
+            else if (skor2>skor1) notifikasi('😢 Kalah, coba lagi!');
+            else notifikasi('🤝 Seri!');
+        }
+
+        function gambarLatar() { ctx.fillStyle='#ecf0f1'; ctx.fillRect(0,0,canvas.width,canvas.height); }
+        function gambarBenda(b) {
+            ctx.fillStyle = b.warna; ctx.shadowColor = b.warna; ctx.shadowBlur=8;
+            ctx.beginPath(); ctx.arc(b.x+b.ukuran/2, b.y+b.ukuran/2, b.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+        }
+        function gambarBuah() {
+            ctx.fillStyle = buah.warna; ctx.shadowColor='#f39c12'; ctx.shadowBlur=10;
+            ctx.beginPath(); ctx.arc(buah.x+buah.ukuran/2, buah.y+buah.ukuran/2, buah.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+            ctx.fillStyle='#27ae60'; ctx.fillRect(buah.x+10, buah.y-5, 5, 8);
+        }
+
+        function updateUI() {
+            document.getElementById('waktu').innerText=waktu;
+            document.getElementById('level').innerText=level;
+            document.getElementById('skor1').innerText=skor1;
+            document.getElementById('skor2').innerText=skor2;
+        }
+
+        gambarLatar(); gambarBenda(p1); gambarBenda(p2); gambarBuah();
+    </script>
+</body>
+</html>
