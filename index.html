@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemakan Buah - Versi Panah Atas Bawah 🍎</title>
+    <title>Pemakan Buah - Hanya Panah Atas Bawah 🍎</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
         body {
@@ -76,7 +76,7 @@
             background: rgba(255,255,255,0.1);
             padding: 8px 16px;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -99,7 +99,7 @@
     </div>
 
     <div class="kontrol-info">
-        🎯 Kontrol: Gunakan **⬆️ Panah Atas** dan **⬇️ Panah Bawah** saja
+        ✅ GUNAKAN HANYA: ⬆️ (Atas) & ⬇️ (Bawah)
     </div>
 
     <script>
@@ -108,13 +108,20 @@
         let waktu = 60, level = 1, skor = 0;
         let gameJalan = false;
 
-        // Objek Pemain & Buah
+        // Posisi Pemain & Buah
         const pemain = {x: 80, y: 180, ukuran: 30, kecepatan: 6, warna: '#3498db'};
-        const buah = {x: acak(200,750), y: acak(50,350), ukuran: 25, warna: '#e67e22'};
+        const buah = {x: 400, y: acak(50,350), ukuran: 25, warna: '#e67e22'};
 
+        // Penyimpanan Tombol
         const tombol = {};
-        window.addEventListener('keydown', e => tombol[e.key] = true);
-        window.addEventListener('keyup', e => tombol[e.key] = false);
+        window.addEventListener('keydown', function(e) {
+            tombol[e.key] = true;
+            // Mencegah halaman ikut bergulir saat tekan panah
+            if(["ArrowUp","ArrowDown"].includes(e.key)) e.preventDefault();
+        });
+        window.addEventListener('keyup', function(e) {
+            tombol[e.key] = false;
+        });
 
         function acak(min, max) { return Math.floor(Math.random()*(max-min)+min); }
 
@@ -129,14 +136,13 @@
             gameJalan = true;
             notifikasi('Permainan Dimulai! 🎮');
             
-            // Timer
             const timer = setInterval(() => {
                 if (!gameJalan) { clearInterval(timer); return; }
                 waktu--;
                 document.getElementById('waktu').innerText = waktu;
                 if (waktu <= 0) {
                     gameJalan = false;
-                    notifikasi(`Selesai! Skor Akhir Kamu: ${skor} 🎉`);
+                    notifikasi(`Selesai! Skor Akhir: ${skor} 🎉`);
                     clearInterval(timer);
                 }
             }, 1000);
@@ -147,8 +153,8 @@
         function resetGame() {
             gameJalan = false;
             waktu = 60; level = 1; skor = 0;
-            pemain.x = 80; pemain.y = 180;
-            buah.x = acak(200,750); buah.y = acak(50,350);
+            pemain.y = 180;
+            buah.y = acak(50,350);
             updateUI(); gambarLatar();
         }
 
@@ -157,51 +163,48 @@
 
             gerakPemain();
             cekMakan();
-            updateUI();
             gambarLatar(); gambarPemain(); gambarBuah();
+            updateUI();
 
             requestAnimationFrame(loopGame);
         }
 
-        // === KONTROL DIUBAH: CUMA PAKAI PANAH ATAS & BAWAH ===
+        // === KONTROL YANG PASTI BERJALAN ===
         function gerakPemain() {
-            if (tombol['ArrowUp'] && pemain.y > 0) {
-                pemain.y -= pemain.kecepatan;
+            if (tombol['ArrowUp']) {
+                if (pemain.y > 0) pemain.y -= pemain.kecepatan;
             }
-            if (tombol['ArrowDown'] && pemain.y < canvas.height - pemain.ukuran) {
-                pemain.y += pemain.kecepatan;
+            if (tombol['ArrowDown']) {
+                if (pemain.y < canvas.height - pemain.ukuran) pemain.y += pemain.kecepatan;
             }
         }
 
         function cekMakan() {
-            if (Math.abs(pemain.x - buah.x) < 25 && Math.abs(pemain.y - buah.y) < 25) {
+            if (Math.abs(pemain.x - buah.x) < 35 && Math.abs(pemain.y - buah.y) < 35) {
                 skor++;
-                buahBaru();
+                buah.y = acak(50,350);
                 cekLevel();
             }
-        }
-
-        function buahBaru() {
-            buah.x = acak(200,750); buah.y = acak(50,350);
         }
 
         function cekLevel() {
             if (skor % 5 === 0 && skor > 0) {
                 level++;
-                notifikasi(`Level Naik! ${level} 🚀`);
-                waktu += 5; // Tambah waktu tiap naik level
+                notifikasi(`Level ${level}! 🚀`);
+                waktu += 5;
             }
         }
 
+        // Gambar Tampilan
         function gambarLatar() { ctx.fillStyle='#ecf0f1'; ctx.fillRect(0,0,canvas.width,canvas.height); }
         function gambarPemain() {
             ctx.fillStyle = pemain.warna; ctx.shadowColor = pemain.warna; ctx.shadowBlur=8;
-            ctx.beginPath(); ctx.arc(pemain.x+pemain.ukuran/2, pemain.y+pemain.ukuran/2, pemain.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+            ctx.beginPath(); ctx.arc(pemain.x, pemain.y, pemain.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
         }
         function gambarBuah() {
-            ctx.fillStyle = buah.warna; ctx.shadowColor='#f39c12'; ctx.shadowBlur=10;
-            ctx.beginPath(); ctx.arc(buah.x+buah.ukuran/2, buah.y+buah.ukuran/2, buah.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-            ctx.fillStyle='#27ae60'; ctx.fillRect(buah.x+10, buah.y-5, 5, 8);
+            ctx.fillStyle = buah.warna; ctx.shadowColor='#e67e22'; ctx.shadowBlur=10;
+            ctx.beginPath(); ctx.arc(buah.x, buah.y, buah.ukuran/2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+            ctx.fillStyle='#27ae60'; ctx.fillRect(buah.x+5, buah.y-15, 5, 8);
         }
 
         function updateUI() {
@@ -210,7 +213,7 @@
             document.getElementById('skor').innerText=skor;
         }
 
-        // Gambar awal
+        // Gambar Awal
         gambarLatar(); gambarPemain(); gambarBuah();
     </script>
 </body>
