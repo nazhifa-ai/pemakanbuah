@@ -7,47 +7,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body {
-            background: linear-gradient(135deg, #EDE7F6, #D1C4E9, #C3B1E1);
+            background: linear-gradient(135deg, #EDE7F6, #D1C4E9);
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            overflow: hidden;
-        }
-
-        /* ✨ LATAR BELAKANG ANIMASI ✨ */
-        .latar-animasi {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .lingkaran {
-            position: absolute;
-            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: mengembang 10s infinite ease-in-out;
-        }
-        .bintang-bergerak {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #fff, 0 0 15px #E1BEE7;
-            animation: kelapkelip 3s infinite alternate ease-in-out;
-        }
-        @keyframes mengembang {
-            0% { transform: scale(0.5); opacity: 0.4; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(0.5); opacity: 0.4; }
-        }
-        @keyframes kelapkelip {
-            0% { opacity: 0.4; transform: translateY(0); }
-            100% { opacity: 1; transform: translateY(-15px); }
         }
 
         /* LOGO */
@@ -55,12 +21,11 @@
             display: flex;
             gap: 20px;
             margin-bottom: 12px;
-            z-index: 2;
         }
         .logo-di-atas img {
             height: 72px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.15);
         }
 
         /* JUDUL */
@@ -70,8 +35,7 @@
             text-align: center;
             margin-bottom: 18px;
             font-weight: 700;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.5);
-            z-index: 2;
+            text-shadow: 1px 1px 3px rgba(106, 27, 154, 0.2);
         }
 
         /* INFO */
@@ -79,29 +43,25 @@
             display: flex;
             gap: 24px;
             margin-bottom: 20px;
-            z-index: 2;
         }
         .info-item {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.6);
+            background: linear-gradient(135deg, #9575CD, #7E57C2);
             padding: 12px 28px;
             border-radius: 30px;
-            color: #6A1B9A;
+            color: white;
             font-weight: 600;
             font-size: 1.15rem;
-            box-shadow: 0 4px 15px rgba(106, 27, 154, 0.15);
+            box-shadow: 0 4px 15px rgba(126, 87, 194, 0.35);
+            letter-spacing: 0.5px;
         }
 
-        /* ✨ AREA PERMAINAN DIPERBAIKI: TINGGI PAS, TIDAK TERPOTONG ✨ */
+        /* AREA KANVAS */
         #gameCanvas {
-            border: 4px solid rgba(255, 255, 255, 0.7);
+            border: none;
             border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(106, 27, 154, 0.25), inset 0 0 20px rgba(255,255,255,0.2);
-            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.25);
+            background: #FAF7FF;
             position: relative;
-            z-index: 2;
-            display: block;
         }
 
         /* ✨ TULISAN TENGAH ✨ */
@@ -110,55 +70,37 @@
             top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #F3E5F5, #E1BEE7, #CE93D8);
+            background: linear-gradient(135deg, #7E57C2, #6A1B9A);
             padding: 22px 55px;
             border-radius: 35px;
-            color: #4A148C;
+            color: white;
             font-size: 1.9rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.3);
+            box-shadow: 0 8px 25px rgba(106, 27, 154, 0.4);
             z-index: 10;
             transition: all 0.3s ease;
-            border: 3px solid #FFFFFF;
-            animation: naikTurunTulisan 2s infinite alternate ease-in-out;
-        }
-        @keyframes naikTurunTulisan {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            100% { transform: translate(-50%, -50%) scale(1.05); }
+            border: 3px solid #B39DDB;
         }
         .tulisan-tengah:hover {
-            box-shadow: 0 0 40px #CE93D8;
+            transform: translate(-50%, -50%) scale(1.08);
+            box-shadow: 0 10px 30px rgba(106, 27, 154, 0.5);
         }
 
         /* PETUNJUK */
         .petunjuk {
             margin-top: 20px;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255,255,255,0.85);
             padding: 12px 25px;
             border-radius: 25px;
             font-size: 1rem;
             color: #6A1B9A;
             font-weight: 500;
-            z-index: 2;
+            box-shadow: 0 3px 10px rgba(106, 27, 154, 0.1);
         }
     </style>
 </head>
 <body>
-
-    <!-- ✨ LATAR BELAKANG ANIMASI ✨ -->
-    <div class="latar-animasi">
-        <div class="lingkaran" style="width: 400px; height: 400px; top: -100px; left: -50px; animation-delay: 0s;"></div>
-        <div class="lingkaran" style="width: 300px; height: 300px; bottom: -50px; right: -50px; animation-delay: 3s;"></div>
-        <div class="bintang-bergerak" style="width: 8px; height: 8px; top: 15%; left: 15%; animation-delay: 0s;"></div>
-        <div class="bintang-bergerak" style="width: 12px; height: 12px; top: 25%; left: 80%; animation-delay: 0.5s;"></div>
-        <div class="bintang-bergerak" style="width: 6px; height: 6px; top: 70%; left: 10%; animation-delay: 1s;"></div>
-        <div class="bintang-bergerak" style="width: 10px; height: 10px; top: 60%; left: 90%; animation-delay: 1.5s;"></div>
-        <div class="bintang-bergerak" style="width: 7px; height: 7px; top: 40%; left: 50%; animation-delay: 2s;"></div>
-        <div class="bintang-bergerak" style="width: 9px; height: 9px; top: 80%; left: 70%; animation-delay: 2.5s;"></div>
-    </div>
 
     <div class="logo-di-atas">
         <img src="1sanden.jpeg" alt="Logo Sanden">
@@ -175,8 +117,7 @@
         <div class="info-item">🔗 Panjang: <span id="panjang">0</span></div>
     </div>
 
-    <!-- ✨ UKURAN TINGGI DIPERBESAR & DIPASANGKAN DENGAN BAGIAN BAWAH ✨ -->
-    <canvas id="gameCanvas" width="800" height="470"></canvas>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
 
     <div id="tulisanTengah" class="tulisan-tengah" onclick="klikTengah()">MULAI PERMAINAN</div>
 
@@ -189,26 +130,25 @@
         const ctx = canvas.getContext('2d');
         const elemenTulisan = document.getElementById('tulisanTengah');
         
+        // VARIABEL BERSIH, TIDAK ADA BATAS
         let level = 1;
         let skor = 0;
         let gameJalan = false;
-        let kecepatan = 3;
+        let kecepatanDasar = 3;
 
-        // Ukuran blok cacing
-        const ukuranBlok = 25;
         const pemain = {
             x: 100,
             y: 200,
-            ukuran: ukuranBlok,
-            arahX: kecepatan,
+            ukuran: 25,
+            arahX: kecepatanDasar,
             arahY: 0,
             ekor: []
         };
 
         const buah = {
-            x: Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok,
-            y: Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok,
-            ukuran: ukuranBlok
+            x: Math.floor(Math.random() * 750) + 25,
+            y: Math.floor(Math.random() * 350) + 25,
+            ukuran: 22
         };
 
         const tombol = {};
@@ -218,6 +158,7 @@
         });
         window.addEventListener('keyup', e => tombol[e.key] = false);
 
+        // KLIK TENGAH
         function klikTengah() {
             if (!gameJalan) {
                 gameJalan = true;
@@ -226,147 +167,18 @@
             }
         }
 
+        // LOGIKA UTAMA - SANGAT SEDERHANA
         function jalankanGame() {
             if (!gameJalan) return;
 
-            // Ubah arah
-            if (tombol['ArrowUp'] && pemain.arahY !== kecepatan) {
+            // UBAH ARAH
+            if (tombol['ArrowUp'] && pemain.arahY !== kecepatanDasar) {
                 pemain.arahX = 0;
-                pemain.arahY = -kecepatan;
+                pemain.arahY = -kecepatanDasar;
             }
-            if (tombol['ArrowDown'] && pemain.arahY !== -kecepatan) {
+            if (tombol['ArrowDown'] && pemain.arahY !== -kecepatanDasar) {
                 pemain.arahX = 0;
-                pemain.arahY = kecepatan;
+                pemain.arahY = kecepatanDasar;
             }
-            if (tombol['ArrowLeft'] && pemain.arahX !== kecepatan) {
-                pemain.arahX = -kecepatan;
-                pemain.arahY = 0;
-            }
-            if (tombol['ArrowRight'] && pemain.arahX !== -kecepatan) {
-                pemain.arahX = kecepatan;
-                pemain.arahY = 0;
-            }
-
-            // Simpan ekor
-            pemain.ekor.unshift({x: pemain.x, y: pemain.y});
-            while (pemain.ekor.length > skor) pemain.ekor.pop();
-
-            // Gerakkan
-            pemain.x += pemain.arahX;
-            pemain.y += pemain.arahY;
-
-            // ✨ PERHITUNGAN BATAS DIPERBAIKI: PAS SAMPAI UJUNG PIKSEL TERAKHIR ✨
-            if (pemain.x < 0 || pemain.x > canvas.width - pemain.ukuran ||
-                pemain.y < 0 || pemain.y > canvas.height - pemain.ukuran) {
-                resetGame();
-                return;
-            }
-
-            // Makan buah
-            if (Math.abs(pemain.x - buah.x) < pemain.ukuran && 
-                Math.abs(pemain.y - buah.y) < pemain.ukuran) {
-                skor++;
-                buah.x = Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok;
-                buah.y = Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok;
-
-                if (skor % 5 === 0) {
-                    level++;
-                    if (kecepatan < 6) kecepatan += 0.25;
-                }
-            }
-
-            gambarLatarDalam();
-            gambarCacingKotak();
-            gambarBuah();
-            updateUI();
-
-            requestAnimationFrame(jalankanGame);
-        }
-
-        function resetGame() {
-            gameJalan = false;
-            level = 1;
-            skor = 0;
-            kecepatan = 3;
-            pemain.x = 100;
-            pemain.y = 200;
-            pemain.arahX = kecepatan;
-            pemain.arahY = 0;
-            pemain.ekor = [];
-            buah.x = Math.floor(Math.random() * ((canvas.width - ukuranBlok) / ukuranBlok)) * ukuranBlok;
-            buah.y = Math.floor(Math.random() * ((canvas.height - ukuranBlok) / ukuranBlok)) * ukuranBlok;
-            
-            elemenTulisan.innerText = 'ULANGI';
-            elemenTulisan.style.display = 'block';
-            gambarLatarDalam();
-        }
-
-        function gambarLatarDalam() {
-            let grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-            grad.addColorStop(0, '#FFFFFF');
-            grad.addColorStop(1, '#F8F5FF');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-        }
-
-        // Bentuk cacing kotak sudut bulat
-        function gambarCacingKotak() {
-            // Ekor
-            for(let i=0; i<pemain.ekor.length; i++) {
-                ctx.fillStyle = `hsl(270, 70%, ${60 - i*2}%)`;
-                ctx.shadowBlur = 5;
-                ctx.shadowColor = '#D1C4E9';
-                roundRect(ctx, pemain.ekor[i].x+1, pemain.ekor[i].y+1, pemain.ukuran-2, pemain.ukuran-2, 6);
-                ctx.fill();
-            }
-            // Kepala
-            ctx.fillStyle = '#6A1B9A';
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = '#9C27B0';
-            roundRect(ctx, pemain.x+1, pemain.y+1, pemain.ukuran-2, pemain.ukuran-2, 8);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-
-            // Mata
-            ctx.fillStyle = 'white';
-            ctx.beginPath(); ctx.arc(pemain.x+8, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(pemain.x+17, pemain.y+8, 3, 0, Math.PI*2); ctx.fill();
-        }
-
-        // Fungsi kotak sudut membulat
-        function roundRect(ctx, x, y, w, h, r) {
-            ctx.beginPath();
-            ctx.moveTo(x + r, y);
-            ctx.lineTo(x + w - r, y);
-            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-            ctx.lineTo(x + w, y + h - r);
-            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-            ctx.lineTo(x + r, y + h);
-            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-            ctx.lineTo(x, y + r);
-            ctx.quadraticCurveTo(x, y, x + r, y);
-            ctx.closePath();
-        }
-
-        function gambarBuah() {
-            ctx.fillStyle = '#EF5350';
-            ctx.shadowColor = '#FFCDD2';
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.arc(buah.x+buah.ukuran/2, buah.y+buah.ukuran/2, buah.ukuran/2-2, 0, Math.PI*2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#2E7D32';
-            ctx.fillRect(buah.x+buah.ukuran/2-1, buah.y-5, 2, 6);
-        }
-
-        function updateUI() {
-            document.getElementById('level').innerText = level;
-            document.getElementById('skor').innerText = skor;
-            document.getElementById('panjang').innerText = skor;
-        }
-
-        gambarLatarDalam();
-    </script>
-</body>
-</html>
+            if (tombol['ArrowLeft'] && pemain.arahX !== kecepatanDasar) {
+                pemain.arahX = -
