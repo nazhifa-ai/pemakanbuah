@@ -16,7 +16,7 @@
             align-items: center;
         }
 
-        /* === LOGO DI ATAS (LUAR AREA PERMAINAN) === */
+        /* LOGO DI ATAS */
         .logo-di-atas {
             display: flex;
             gap: 20px;
@@ -38,7 +38,7 @@
             width: 800px;
             display: flex;
             justify-content: center;
-            gap: 40px; /* Jarak antar tulisan */
+            gap: 50px;
             background: rgba(255,255,255,0.6);
             padding: 12px 20px;
             border-radius: 12px;
@@ -84,7 +84,7 @@
             font-weight: bold;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
+1            transition: 0.2s;
             box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
         }
         button:hover {
@@ -96,7 +96,7 @@
 </head>
 <body>
 
-    <!-- 🔴 LOGO DITARUH DI ATAS (LUAR KOTAK GAME) -->
+    <!-- LOGO DI ATAS -->
     <div class="logo-di-atas">
         <img src="1sanden.jpeg" alt="Logo Sanden">
         <img src="logosklh.jpeg" alt="Logo Sekolah">
@@ -107,7 +107,7 @@
     <h1>🐍 CACING PEMAKAN BUAH 🍎</h1>
     <div id="notifikasi"></div>
 
-    <!-- ⏱️ HAPUS MENU WAKTU, TINGGAL LEVEL, SKOR, PANJANG -->
+    <!-- INFO TANPA WAKTU & TANPA TARGET -->
     <div class="info">
         <div>📈 Level: <span id="level">1</span></div>
         <div>⭐ Skor Kamu: <span id="skor">0</span></div>
@@ -124,17 +124,17 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let level = 1, skor = 0; // ❌ WAKTU DIHAPUS
+        let level = 1, skor = 0;
         let gameJalan = false;
 
         // Objek Cacing
         const pemain = {
-            x: 80, y: 200, ukuran: 26, kecepatan: 3.5, kecepatanDasar: 3.5,
+            x: 80, y: 200, ukuran: 26, kecepatan: 3.2, kecepatanDasar: 3.2,
             arahX: 1, arahY: 0, ekor: []
         };
 
         // Buah
-        const buah = {x: 500, y: acak(50,350), ukuran: 24, warna: '#E63946'};
+        const buah = {x: acak(100, 700), y: acak(50, 350), ukuran: 24, warna: '#E63946'};
 
         const tombol = {};
         window.addEventListener('keydown', e => {
@@ -153,17 +153,17 @@
         function mulaiGame() {
             if (gameJalan) return;
             gameJalan = true;
-            notifikasi('Permainan Dimulai! 🎮');
+            notifikasi('Main Sepuasnya! 🎮');
             loopGame();
         }
 
         function resetGame() {
             gameJalan = false;
-            level = 1; skor = 0; // ❌ TIDAK ADA WAKTU
+            level = 1; skor = 0;
             pemain.x = 80; pemain.y = 200; pemain.ekor = [];
             pemain.arahX = 1; pemain.arahY = 0;
             pemain.kecepatan = pemain.kecepatanDasar;
-            buah.x = 500; buah.y = acak(50,350);
+            buah.x = acak(100, 700); buah.y = acak(50, 350);
             updateUI(); gambarSemua();
         }
 
@@ -185,11 +185,12 @@
             pemain.y += pemain.arahY * pemain.kecepatan;
         }
 
+        // KALAU NABRAK DINDING BARU KALAH
         function cekTabrakanDinding() {
             if (pemain.x <= 0 || pemain.x >= canvas.width - pemain.ukuran ||
                 pemain.y <= 0 || pemain.y >= canvas.height - pemain.ukuran) {
                 gameJalan = false;
-                notifikasi(`💥 NABRAK DINDING! Skor Akhir: ${skor}`);
+                notifikasi(`💥 KALAH! Skor Akhir: ${skor}`);
             }
         }
 
@@ -198,13 +199,15 @@
             while(pemain.ekor.length > skor) pemain.ekor.pop();
         }
 
+        // MAKAN BUAH TERUS, TANPA BERHENTI
         function cekMakanBuah() {
             if (Math.abs(pemain.x - buah.x) < 30 && Math.abs(pemain.y - buah.y) < 30) {
                 skor++;
                 buah.x = acak(100, 700); buah.y = acak(50, 350);
+                // Semakin lama main, semakin cepat (semakin menantang)
                 if (skor % 5 === 0) { 
                     level++; 
-                    pemain.kecepatan += 0.4; 
+                    pemain.kecepatan += 0.35; 
                     notifikasi(`Level ${level}! Semakin Cepat! 🚀`); 
                 }
             }
@@ -248,7 +251,6 @@
             ctx.fillStyle='#228B22'; ctx.fillRect(buah.x-2, buah.y-14, 4, 8);
         }
 
-        // ❌ HAPUS BAGIAN WAKTU
         function updateUI() {
             document.getElementById('level').innerText=level;
             document.getElementById('skor').innerText=skor;
